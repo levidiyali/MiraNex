@@ -85,6 +85,19 @@
     (function () {
         const dropdowns = document.querySelectorAll('.filter-dropdown');
         const filterRow = document.querySelector('.filter');
+        let lastOpenedAt = 0;
+
+        function repositionOpenDropdowns() {
+            dropdowns.forEach(function (dropdown) {
+                if (dropdown.open) {
+                    const summary = dropdown.querySelector('summary');
+                    const options = dropdown.querySelector('.filter-options');
+                    const rect = summary.getBoundingClientRect();
+                    options.style.top = (rect.bottom + 4) + 'px';
+                    options.style.left = rect.left + 'px';
+                }
+            });
+        }
 
         dropdowns.forEach(function (dropdown) {
             const options = dropdown.querySelector('.filter-options');
@@ -100,7 +113,7 @@
                 checkbox.addEventListener('change', updateSummary);
             });
 
-            updateSummary(); // run once on page load
+            updateSummary();
 
             dropdown.addEventListener('toggle', function () {
                 if (dropdown.open) {
@@ -121,16 +134,11 @@
             });
         });
 
+        window.addEventListener('scroll', repositionOpenDropdowns);
         if (filterRow) {
-            filterRow.addEventListener('scroll', function () {
-                dropdowns.forEach(function (dropdown) {
-                    if (dropdown.open) {
-                        dropdown.removeAttribute('open');
-                    }
-                });
-            });
+            filterRow.addEventListener('scroll', repositionOpenDropdowns);
         }
     })();
-
-
 </script>
+
+<!--This is a comment-->

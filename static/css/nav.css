@@ -125,6 +125,74 @@ a {
     margin: 10px;
 }
 
+/* For delete modal */
+
+.confirm-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.confirm-overlay.open {
+    display: flex;
+}
+
+.confirm-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--nav-color);
+    padding: 25px 30px;
+    border-radius: 10px;
+    max-width: 350px;
+    text-align: center;
+}
+
+.confirm-box img{
+    width: 65px;
+}
+
+.confirm-box p {
+    margin-bottom: 20px;
+    font-size: 15px;
+    max-width: 340px;
+    color: whitesmoke;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.confirm-actions button {
+    padding: 9px 18px;
+    border-radius: 6px;
+    border: none;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#confirm-cancel {
+    background-color: #3a4a5c;
+    color: whitesmoke;
+}
+
+#confirm-delete {
+    background-color: #db2929;
+    color: whitesmoke;
+}
+
 @media (max-width: 1024px) {
     .nav-bar {
         gap: 0;
@@ -168,6 +236,25 @@ a {
         width: fit-content;
         background-color: #db2929;
         margin: 0;
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .confirm-box {
+        margin: 0 25px;
+    }
+    .confirm-box img {
+        width: 55px;
+    }
+
+    .confirm-box h3{
+        font-size: 16px;
+    }
+
+    .confirm-box p {
+        font-size: 14px;
     }
 }
 

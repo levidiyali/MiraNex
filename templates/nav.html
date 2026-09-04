@@ -51,7 +51,7 @@
     {% if current_user.is_authenticated %}
 
     <span>Hi, {{ current_user.username }}</span>
-    
+
     <a href="{{ url_for('logout') }}" id="logout">Logout</a>
 
     <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
@@ -63,6 +63,22 @@
     <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
     {% endif %}
 
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+
+        <img src="{{ url_for('static', filename = 'images/bin.png') }}" alt="bin">
+
+        <h3>Delete Account</h3>
+
+        <p>Are you sure you want to delete your account? This cannot be undone.</p>
+        
+        <div class="confirm-actions">
+            <button type="button" id="confirm-cancel">Cancel</button>
+            <button type="button" id="confirm-delete">Delete</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -90,21 +106,40 @@
             });
         }
 
+        const overlay = document.getElementById('confirm-overlay');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        const confirmBtn = document.getElementById('confirm-delete');
+        let pendingForm = null;
+
+        function showConfirm(form) {
+            pendingForm = form;
+            overlay.classList.add('open');
+        }
+
+        function hideConfirm() {
+            pendingForm = null;
+            overlay.classList.remove('open');
+        }
+
+        cancelBtn.addEventListener('click', hideConfirm);
+
+        confirmBtn.addEventListener('click', function () {
+            if (pendingForm) {
+                pendingForm.submit();
+            }
+        });
+
         if (deleteForm) {
             deleteForm.addEventListener('submit', function (event) {
-                const confirmed = confirm('Are you sure you want to permanently delete your account?');
-                if (!confirmed) {
-                    event.preventDefault();
-                }
+                event.preventDefault();
+                showConfirm(deleteForm);
             });
         }
 
         document.querySelectorAll('.delete-account-form-mobile').forEach(function (form) {
             form.addEventListener('submit', function (event) {
-                const confirmed = confirm('Are you sure you want to permanently delete your account? This cannot be undone.');
-                if (!confirmed) {
-                    event.preventDefault();
-                }
+                event.preventDefault();
+                showConfirm(form);
             });
         });
     })();

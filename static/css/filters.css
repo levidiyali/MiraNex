@@ -1,3 +1,8 @@
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
 .filter {
     font-size: 15px;
     display: flex;
@@ -40,8 +45,11 @@
     background: var(--nav-color);
     border-radius: 6px;
     padding: 10px;
-    min-width: 120px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 126px;
+    max-height: 355px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: gray transparent;
     z-index: 10;
 }
 
@@ -80,11 +88,6 @@ button[type=submit]:hover {
     transform: scale(1.02);
 }
 
-.field {
-    display: flex;
-    flex-direction: column;
-}
-
 @media (max-width: 1024px) {
     .filter {
         flex-wrap: nowrap;
@@ -94,6 +97,10 @@ button[type=submit]:hover {
         padding: 0 20px;
         margin-top: 30px;
         margin-bottom: 30px;
+    }
+
+    .filter-options{
+        z-index: 20;
     }
 
     .filter::-webkit-scrollbar {
