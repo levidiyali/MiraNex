@@ -1,0 +1,136 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/filters.css') }}">
+
+<form method="GET" action="/browse">
+    <div class="filter">
+        <div class="field">
+            <p>Name</p>
+            <input type="text" name="search" placeholder="Search" value="{{ request.args.get('search', '') }}"
+                autocomplete="off">
+        </div>
+
+        <div class="field">
+            <p>Type</p>
+            <details class="filter-dropdown" name="filters">
+                <summary>Select</summary>
+                <div class="filter-options">
+                    {% for t in ['Funny', 'Calm', 'Intense', 'Emotional', 'Scary', 'Mysterious', 'Wholesome',
+                    'Historical', 'Sweet', 'Dark', 'Superpowers', 'Competitive'] %}
+                    <label>
+                        <input type="checkbox" name="type" value="{{ t }}" {% if t in request.args.getlist('type')
+                            %}checked{% endif %}>
+                        {{ t }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+
+        <div class="field">
+            <p>Format</p>
+            <details class="filter-dropdown" name="filters">
+                <summary>Select</summary>
+                <div class="filter-options">
+                    {% for f in ['TV', 'Movie', 'ONA'] %}
+                    <label>
+                        <input type="checkbox" name="format" value="{{ f }}" {% if f in request.args.getlist('format')
+                            %}checked{% endif %}>
+                        {{ f }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+
+        <div class="field">
+            <p>Genre</p>
+            <details class="filter-dropdown" name="filters">
+                <summary>Select</summary>
+                <div class="filter-options">
+                    {% for g in ['Action', 'Adventure', 'Comedy', 'Romance', 'Fantasy', 'Isekai', 'Drama', 'Horror',
+                    'Slice of Life', 'School', 'Iyashikei',
+                    'Sci-Fi', 'Mystery', 'Sports', 'Supernatural', 'Thriller', 'Psychological', 'Martial Arts'] %}
+                    <label>
+                        <input type="checkbox" name="genre" value="{{ g }}" {% if g in request.args.getlist('genre')
+                            %}checked{% endif %}>
+                        {{ g }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+
+        <div class="field">
+            <p>Time</p>
+            <details class="filter-dropdown" name="filters">
+                <summary>Select</summary>
+                <div class="filter-options">
+                    {% for label in ['Quick Watch', 'Weekend', 'Week', 'Month', 'Long Haul'] %}
+                    <label>
+                        <input type="checkbox" name="time" value="{{ label }}" {% if label in
+                            request.args.getlist('time') %}checked{% endif %}>
+                        {{ label }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+
+        <div class="field">
+            <button type="submit">Filter</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    (function () {
+        const dropdowns = document.querySelectorAll('.filter-dropdown');
+        const filterRow = document.querySelector('.filter');
+
+        dropdowns.forEach(function (dropdown) {
+            const options = dropdown.querySelector('.filter-options');
+            const summary = dropdown.querySelector('summary');
+            const checkboxes = dropdown.querySelectorAll('input[type=checkbox]');
+
+            function updateSummary() {
+                const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                summary.textContent = checkedCount > 0 ? checkedCount + ' selected' : 'Select';
+            }
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', updateSummary);
+            });
+
+            updateSummary(); // run once on page load
+
+            dropdown.addEventListener('toggle', function () {
+                if (dropdown.open) {
+                    const rect = summary.getBoundingClientRect();
+                    options.style.position = 'fixed';
+                    options.style.top = (rect.bottom + 4) + 'px';
+                    options.style.left = rect.left + 'px';
+                    lastOpenedAt = Date.now();
+                }
+            });
+        });
+
+        document.addEventListener('click', function (event) {
+            dropdowns.forEach(function (dropdown) {
+                if (dropdown.open && !dropdown.contains(event.target)) {
+                    dropdown.removeAttribute('open');
+                }
+            });
+        });
+
+        if (filterRow) {
+            filterRow.addEventListener('scroll', function () {
+                dropdowns.forEach(function (dropdown) {
+                    if (dropdown.open) {
+                        dropdown.removeAttribute('open');
+                    }
+                });
+            });
+        }
+    })();
+
+
+</script>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
+    <title>{{ anime.name }} - MiraNex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/details.css') }}">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+
+    <div class="container">
+
+        <div class="left-side">
+
+            <div class="first-part">
+                <img src="{{ url_for('static', filename='images/' + anime.image) }}">
+            </div>
+
+            <div class="second-part">
+                <h1>{{ anime.name }}</h1>
+
+                <div class="list-actions">
+                    {% if current_user.is_authenticated %}
+
+                    <form method="POST" action="{{ url_for('toggle_list', id=anime.id) }}" id="list-form"
+                        data-in-watchlist="{{ 'true' if in_watchlist else 'false' }}"
+                        data-in-watched="{{ 'true' if in_watched else 'false' }}">
+
+                        <select name="list_type" id="list-type-select">
+                            <option value="watchlist">Watchlist</option>
+                            <option value="watched">Watched</option>
+                        </select>
+
+                        <button type="submit" id="list-action-btn">Add</button>
+                    </form>
+
+                    {% else %}
+                    <div class="login-to-add">
+                        <p><a href="{{ url_for('login') }}">Log in</a> to add this to your list.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <div class="side-details">
+                <div class="item">
+                    <label>Rating</label>
+                    <p>{{ anime.rating }} ⭐</p>
+                </div>
+
+                <div class="item">
+                    <label>Genres</label>
+                    <div class="genre-list">
+                        {% for g in anime.genres.split(',') %}
+                        <p>{{ g.strip() }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <label>Format</label>
+                    <p>{{ anime.format }}</p>
+                </div>
+
+                <div class="item">
+                    <label>Seasons</label>
+                    <p>{{ anime.seasons }}</p>
+                </div>
+
+                <div class="item">
+                    <label>Episodes</label>
+                    <p>{{ anime.episodes }}</p>
+                </div>
+
+                <div class="item">
+                    <label>Episode Length</label>
+                    <p>{{ anime.episode_length }}</p>
+                </div>
+
+                <div class="item">
+                    <label>Release Year</label>
+                    <p>{{ anime.release_year }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-side">
+            <div class="desc">
+                <h2>Description</h2>
+                <p>{{ anime.description }}</p>
+            </div>
+
+            <div class="top-bg-img">
+                <img src="{{ url_for('static', filename='images/' + anime.detail_image) }}">
+            </div>
+
+            <div class="recommended">
+                <h2>You Might Also Like</h2>
+                <div class="anime-grid">
+                    {% for rec in recommended %}
+                    <div class="list">
+                        <a href="/anime/{{ rec.id }}" class="anime-card">
+                            <img src="{{ url_for('static', filename='images/' + rec.image) }}">
+                            <h2>{{ rec.name }}</h2>
+                        </a>
+                    </div>
+                    {% else %}
+                    <p>No similar anime found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const form = document.getElementById('list-form');
+            if (!form) return;
+
+            const select = document.getElementById('list-type-select');
+            const button = document.getElementById('list-action-btn');
+            const inWatchlist = form.dataset.inWatchlist === 'true';
+            const inWatched = form.dataset.inWatched === 'true';
+
+            function updateButton() {
+                const alreadyIn = select.value === 'watchlist' ? inWatchlist : inWatched;
+                button.textContent = alreadyIn ? 'Remove' : 'Add';
+                button.className = alreadyIn ? 'remove-btn' : 'add-btn';
+            }
+
+            select.addEventListener('change', updateButton);
+            updateButton();
+        })();
+    </script>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
+    <title>Login - MiraNex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <main>
+        <div class="auth-container">
+            <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+                <h2>Log in</h2>
+
+                <label>Email</label>
+                <input type="email" name="email" required>
+
+                <label>Password</label>
+                <input type="password" name="password" required>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <p class="error">{{ message }}</p>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <button type="submit">Log In</button>
+
+                <p class="switch"><a href="{{ url_for('signup') }}">Don't have an account? Sign up</a></p>
+            </form>
+        </div>
+
+    </main>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

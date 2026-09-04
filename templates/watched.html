@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
+    <title>Watched - MiraNex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <main>
+        <div class="watchlist-container">
+            <div class="anime-list">
+                <div class="label">
+                    <p>Watched</p>
+                </div>
+                <div class="anime-grid">
+                    {% for anime in anime_list %}
+                    <div class="list">
+                        <a href="/anime/{{ anime.id }}" class="anime-card">
+                            <img src="{{ url_for('static', filename='images/' + anime.image) }}">
+                            <h2>{{ anime.name }}</h2>
+                        </a>
+                    </div>
+
+                    {% else %}
+                    <div class="empty">
+                        <p>You haven't marked anything as watched yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

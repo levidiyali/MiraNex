@@ -1,0 +1,111 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+
+<div class="nav-bar">
+    <div class="logo">
+        <a href="/">MiraNex</a>
+    </div>
+
+    <div class="text-list">
+        <a href="{{ url_for('watchlist') }}">Watchlist</a>
+        <a href="{{ url_for('watched') }}">Watched</a>
+        <a href="{{ url_for('about') }}">About</a>
+    </div>
+
+    <div class="sign">
+        {% if current_user.is_authenticated %}
+        <div class="profile-menu">
+
+            <button type="button" id="profile-toggle" class="profile-icon">👤</button>
+
+            <div class="profile-dropdown" id="profile-dropdown">
+                <form method="POST" action="{{ url_for('delete_account') }}" id="delete-account-form">
+                    <button type="submit" id="delete-account-btn">Delete Account</button>
+                </form>
+            </div>
+
+        </div>
+
+        <span>Hi, {{ current_user.username }}</span>
+        <a href="{{ url_for('logout') }}" id="logout">Logout</a>
+
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
+        {% endif %}
+
+    </div>
+
+    <div class="menu" id="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+</div>
+
+<div class="mobile-menu" id="mobile-menu">
+    <a href="{{ url_for('watchlist') }}">Watchlist</a>
+    <a href="{{ url_for('watched') }}">Watched</a>
+    <a href="{{ url_for('about') }}">About</a>
+
+    {% if current_user.is_authenticated %}
+
+    <span>Hi, {{ current_user.username }}</span>
+    
+    <a href="{{ url_for('logout') }}" id="logout">Logout</a>
+
+    <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
+        <button type="submit" class="delete-account-btn-mobile">Delete Account</button>
+    </form>
+
+    {% else %}
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
+    {% endif %}
+
+</div>
+
+<script>
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.toggle('open');
+    });
+</script>
+
+<script>
+    (function () {
+        const toggle = document.getElementById('profile-toggle');
+        const dropdown = document.getElementById('profile-dropdown');
+        const deleteForm = document.getElementById('delete-account-form');
+
+        if (toggle && dropdown) {
+            toggle.addEventListener('click', function (event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (dropdown.classList.contains('open') && !dropdown.contains(event.target) && event.target !== toggle) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        }
+
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function (event) {
+                const confirmed = confirm('Are you sure you want to permanently delete your account?');
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        }
+
+        document.querySelectorAll('.delete-account-form-mobile').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const confirmed = confirm('Are you sure you want to permanently delete your account? This cannot be undone.');
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        });
+    })();
+</script>

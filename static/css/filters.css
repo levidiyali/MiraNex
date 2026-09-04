@@ -1,0 +1,120 @@
+.filter {
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 57px;
+    margin-bottom: 55px;
+}
+
+.filter p {
+    font-weight: bold;
+}
+
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 25px;
+    margin-top: 10px;
+    width: 170px;
+}
+
+.filter-dropdown summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 9px 12px;
+    border-radius: 6px;
+    background: var(--nav-color);
+    user-select: none;
+}
+
+.filter-dropdown[open] summary {
+    border-color: #888;
+}
+
+.filter-options {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: var(--nav-color);
+    border-radius: 6px;
+    padding: 10px;
+    min-width: 120px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.filter-options label {
+    display: block;
+    padding: 4px 0;
+    white-space: nowrap;
+}
+
+input[type=text] {
+    background-color: var(--nav-color);
+    border: none;
+    width: 145px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-right: 25px;
+    margin-top: 10px;
+    font-size: 15px;
+    color: rgb(180, 180, 180);
+    outline: none;
+}
+
+button[type=submit] {
+    background-color: var(--button-color);
+    border: none;
+    padding: 9px;
+    width: 60px;
+    color: whitesmoke;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 30px;
+    margin-left: 60px;
+}
+
+button[type=submit]:hover {
+    transform: scale(1.02);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+    .filter {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 20px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .filter::-webkit-scrollbar {
+        display: none;
+    }
+
+    .field {
+        flex-shrink: 0;
+    }
+
+    .filter-dropdown {
+        flex-shrink: 0;
+    }
+
+    input[type=text] {
+        flex-shrink: 0;
+    }
+
+    button[type=submit] {
+        flex-shrink: 0;
+        margin-top: 25px;
+        margin-left: 20px;
+    }
+}

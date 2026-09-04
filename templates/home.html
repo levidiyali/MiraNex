@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
+    <title>MiraNex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+    {% include 'filters.html' %}
+
+    <main>
+        <div class="container">
+            <div class="anime-list">
+                <div class="label">
+                    <p>Popular</p>
+                    <a href="/browse?sort=rating">View All</a>
+                </div>
+                <div class="anime-grid">
+                    {% for anime in top_rated %}
+                    <div class="list">
+                        <a href="/anime/{{ anime.id }}" class="anime-card">
+                            <img src="{{ url_for('static', filename='images/' + anime.image) }}">
+                            <h2>{{ anime.name }}</h2>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="anime-list">
+                <div class="label">
+                    <p>Beginner Friendly</p>
+                    <a href="/browse?beginner=1">View All</a>
+                </div>
+                <div class="anime-grid">
+                    {% for anime in beginner_friendly %}
+                    <div class="list">
+                        <a href="/anime/{{ anime.id }}" class="anime-card">
+                            <img src="{{ url_for('static', filename='images/' + anime.image) }}">
+                            <h2>{{ anime.name }}</h2>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="anime-list">
+                <div class="label">
+                    <p>Movies for you</p>
+                    <a href="/browse?time=Quick+Watch">View All</a>
+                </div>
+                <div class="anime-grid">
+                    {% for anime in quick_watch %}
+                    <div class="list">
+                        <a href="/anime/{{ anime.id }}" class="anime-card">
+                            <img src="{{ url_for('static', filename='images/' + anime.image) }}">
+                            <h2>{{ anime.name }}</h2>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

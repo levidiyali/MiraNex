@@ -1,0 +1,344 @@
+:root {
+    --nav-color: #1a293a;
+    --button-color: rgb(26, 106, 255);
+    --text-color: rgb(109, 188, 233);
+}
+
+html, body {
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+* {
+    color: rgb(197, 197, 197);
+    padding: 0;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: #101822;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 75px;
+}
+
+.anime-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 1125px;
+}
+
+.anime-list .label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.anime-list .label a {
+    font-size: 13px;
+    font-weight: normal;
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+.anime-list .label a:hover {
+    text-decoration: underline;
+}
+
+.anime-card img {
+    width: 100%;
+    aspect-ratio: 185 / 260;
+    object-fit: cover;
+    display: block;
+}
+
+.anime-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 50px;
+    font-size: 10px;
+    width: 100%;
+    max-width: 1125px;
+}
+
+.anime-grid .list h2 {
+    margin-top: 8px;
+}
+
+.anime-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+/*For watchlist and watched*/
+
+.watchlist-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 75px;
+    margin-top: 30px;
+}
+
+.empty {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 20px;
+}
+
+.empty p{
+    font-size: 18px;
+    max-width: 1000px;
+    min-width: 300px;
+    word-wrap: break-word;
+}
+
+.empty img{
+    width: 90px;
+}
+
+/*About page*/
+
+.abt-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #131f2c;
+    margin: 50px auto 50px;
+    padding: 20px 35px;
+    max-width: 1050px;
+    border-radius: 15px;
+}
+
+.abt-container .main-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+
+.abt-container .main-text h2{
+    color: whitesmoke;
+    font-size: 40px;
+}
+
+.abt-container .main-text p{
+    color: var(--text-color);
+    font-size: 19px;
+}
+
+.ft-text label{
+    color: whitesmoke;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.ft-text p{
+    color: var(--text-color);
+    max-width: 400px;
+    font-size: 16px;
+}
+
+.ft-text{
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.why-section, .vision-section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid var(--text-color);
+    margin-top: 30px;
+    padding-bottom: 50px;
+    width: 750px;
+}
+
+.vision-section{
+    border: none;
+}
+
+.why-section .ft-text, .vision-section .ft-text{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.why-section .ft-text label, .vision-section .ft-text label{
+    font-size: 27px;
+    margin-bottom: 8px;
+}
+
+.why-section .ft-text p, .vision-section .ft-text p{
+    max-width: 600px;
+    font-size: 18px;
+}
+
+
+.features{
+    border-bottom: 2px solid var(--text-color);
+    padding-bottom: 40px;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-left: 5px solid var(--button-color);
+    border-radius: 8px;
+    background-color: #19283a;
+    padding: 30px;
+    width: 380px;
+}
+
+@media (max-width: 1024px) {
+    .anime-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .container {
+        padding: 0 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .watchlist-container {
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    .empty {
+        height: 40vh;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .abt-container {
+        margin: 30px 20px;
+        padding: 20px;
+        max-width: none;
+    }
+
+    .why-section,
+    .vision-section {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .why-section .ft-text label, .vision-section .ft-text label{
+        font-size: 26px;
+    }
+
+    .why-section .ft-text p, .vision-section .ft-text p{
+        font-size: 17px;
+    }
+
+    .item-grid {
+        gap: 20px;
+    }
+
+    .item-grid .ft-text label{
+        font-size: 17px;
+    }
+
+    .item-grid .ft-text p{
+        font-size: 16px;
+    }
+
+    .item {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .anime-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .anime-grid .list h2 {
+        font-size: 13px;
+    }
+
+    .empty p {
+        font-size: 15px;
+        min-width: 0;
+    }
+
+    .empty img {
+        width: 70px;
+    }
+
+    .abt-container .main-text h2 {
+        font-size: 30px;
+    }
+
+    .abt-container .main-text p {
+        font-size: 16px;
+    }
+
+    .item-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .item-grid .ft-text label{
+        font-size: 16px;
+    }
+
+    .item-grid .ft-text p{
+        font-size: 15px;
+    }
+
+    .why-section .ft-text label,
+    .vision-section .ft-text label {
+        font-size: 22px;
+    }
+
+    .why-section .ft-text p,
+    .vision-section .ft-text p {
+        font-size: 15px;
+        max-width: 100%;
+    }
+}

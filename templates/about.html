@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
+    <title>About - MiraNex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <div class="abt-container">
+        <div class="main-text">
+            <h2>MiraNex</h2>
+            <p>Discover, Explore, and Experience Anime Like Never Before</p>
+        </div>
+
+
+        <div class="features">
+
+            <div class="item-grid">
+                <div class="item">
+                    <div class="ft-text">
+                        <label for="">Discover Without Limits</label>
+                        <p>Find your next favorite anime with powerful search and simpler filtering built around the way
+                            you
+                            watch.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="ft-text">
+                        <label for="">Carry MiraNex Anywhere</label>
+                        <p>Keep your anime library, wishlist, and watched list close wherever you go.</p>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="ft-text">
+                        <label for="">Find by Time</label>
+                        <p>Whether you have a weekend or want a long-running series, MiraNex can help you find something
+                            that fits.</p>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="ft-text">
+                        <label for="">Build Your Library</label>
+                        <p>Save anime to your wishlist and keep track of what you've watched with MiraNex</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="why-section">
+            <div class="ft-text">
+                <label for="">Why MiraNex?</label>
+                <p>With thousands of anime available, finding something worth watching can be overwhelming. MiraNex
+                    makes
+                    discovering anime simpler by helping you find something that matches your interests, vibe, and
+                    available
+                    time.</p>
+            </div>
+        </div>
+
+        <div class="vision-section">
+            <div class="ft-text">
+                <label for="">Your Journey Through Anime</label>
+                <p>From the first anime you discover to the series that become your favorites, MiraNex aims to be a
+                    place where your anime journey can be explored, organized, and remembered.</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>
