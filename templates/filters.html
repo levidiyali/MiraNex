@@ -1,8 +1,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/filters.css') }}">
 
+<div class="filter-overlay-mobile" id="filter-overlay-mobile"></div>
+
 <form method="GET" action="/browse">
     <div class="filter">
-        <div class="field">
+
+        <div class="field" id="name-field">
             <p>Name</p>
             <input type="text" name="search" placeholder="Search" value="{{ request.args.get('search', '') }}"
                 autocomplete="off">
@@ -81,23 +84,14 @@
     </div>
 </form>
 
+<!--This is a comment-->
+
 <script>
     (function () {
         const dropdowns = document.querySelectorAll('.filter-dropdown');
-        const filterRow = document.querySelector('.filter');
-        let lastOpenedAt = 0;
-
-        function repositionOpenDropdowns() {
-            dropdowns.forEach(function (dropdown) {
-                if (dropdown.open) {
-                    const summary = dropdown.querySelector('summary');
-                    const options = dropdown.querySelector('.filter-options');
-                    const rect = summary.getBoundingClientRect();
-                    options.style.top = (rect.bottom + 4) + 'px';
-                    options.style.left = rect.left + 'px';
-                }
-            });
-        }
+        const mobileOverlay = document.getElementById('filter-overlay-mobile');
+        const isPhone = () => window.innerWidth <= 480;
+        const isTablet = () => window.innerWidth > 480 && window.innerWidth <= 1024;
 
         dropdowns.forEach(function (dropdown) {
             const options = dropdown.querySelector('.filter-options');
@@ -117,11 +111,19 @@
 
             dropdown.addEventListener('toggle', function () {
                 if (dropdown.open) {
-                    const rect = summary.getBoundingClientRect();
-                    options.style.position = 'fixed';
-                    options.style.top = (rect.bottom + 4) + 'px';
-                    options.style.left = rect.left + 'px';
-                    lastOpenedAt = Date.now();
+                    if (isPhone()) {
+                        if (mobileOverlay) {
+                            mobileOverlay.classList.add('open');
+                        }
+                    } else if (isTablet()) {
+                        const rect = summary.getBoundingClientRect();
+                        options.style.position = 'fixed';
+                        options.style.top = (rect.bottom + 4) + 'px';
+                        options.style.left = rect.left + 'px';
+                    }
+
+                } else if (isPhone() && mobileOverlay) {
+                    mobileOverlay.classList.remove('open');
                 }
             });
         });
@@ -134,11 +136,13 @@
             });
         });
 
-        window.addEventListener('scroll', repositionOpenDropdowns);
-        if (filterRow) {
-            filterRow.addEventListener('scroll', repositionOpenDropdowns);
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', function () {
+                dropdowns.forEach(function (dropdown) {
+                    dropdown.removeAttribute('open');
+                });
+                mobileOverlay.classList.remove('open');
+            });
         }
     })();
 </script>
-
-<!--This is a comment-->
