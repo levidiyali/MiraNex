@@ -127,7 +127,7 @@ button[type=submit]:hover {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .filter {
         -webkit-overflow-scrolling: auto;
     }

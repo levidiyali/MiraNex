@@ -16,8 +16,8 @@
             <details class="filter-dropdown" name="filters">
                 <summary>Select</summary>
                 <div class="filter-options">
-                    {% for t in ['Funny', 'Calm', 'Intense', 'Emotional', 'Scary', 'Mysterious', 'Wholesome',
-                    'Historical', 'Sweet', 'Dark', 'Superpowers', 'Competitive'] %}
+                    {% for t in ['Funny', 'Calm', 'Intense', 'Emotional', 'Scary', 'Mysterious', 'Wholesome', 'Another World',
+                    'Historical', 'Sweet', 'Dark', 'Superpowers', 'Competitive', 'Science Fiction'] %}
                     <label>
                         <input type="checkbox" name="type" value="{{ t }}" {% if t in request.args.getlist('type')
                             %}checked{% endif %}>

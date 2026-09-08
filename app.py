@@ -97,6 +97,8 @@ TYPE_GENRE_MAP = {
     'Dark': ['Horror', 'Psychological'],
     'Superpowers': ['Supernatural'],
     'Competitive': ['Sports'],
+    'Another World' : ['Isekai'],
+    'Science Fiction' : ['Sci-Fi']
 }
 
 TIME_BUCKETS = {
@@ -294,6 +296,10 @@ def delete_account():
     db.session.commit()
 
     return redirect(url_for('home'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
 
 @app.route('/anime/<int:id>')
 def anime_detail(id):
