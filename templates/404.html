@@ -64,17 +64,20 @@
             .right-side {
                 display: flex;
                 flex-direction: column;
-                gap: 20px;
+                gap: 60px;
             }
 
-            .right-side h1 {
+            .head {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .head h1 {
                 font-size: 130px;
                 transform: scaleY(1.1);
-                margin-bottom: 10px;
             }
 
             .text p {
-                font-weight: bold;
                 font-size: 17px;
                 margin-bottom: 10px;
             }
@@ -84,7 +87,7 @@
             }
 
             .back-btn {
-                margin-top: 50px;
+                margin-top: 10px;
             }
 
             @media (max-width: 1080px) {
@@ -130,9 +133,15 @@
                     width: 240px;
                 }
 
+                .head{
+                    justify-content: center;
+                    align-items: center;
+                }
+
                 .right-side {
                     justify-content: center;
                     align-items: center;
+                    gap: 35px;
                 }
 
                 .right-side h1 {
@@ -167,11 +176,14 @@
 
             <div class="right-side">
 
+                <div class="head">
                 <h1>404</h1>
+                <h2>Page Not Found</h2>
+                </div>
 
                 <div class="text">
-                    <p>You coming here was all part of my plan</p>
-                    <label>Your role here is finished. You may return now.</label>
+                    <p>You coming here was all part of my plan.</p>
+                    
                 </div>
 
                 <div class="back-btn">
