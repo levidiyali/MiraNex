@@ -17,8 +17,11 @@
                 <div class="label">
                     <p>Watched</p>
                 </div>
+
                 <div class="anime-grid">
+
                     {% for anime in anime_list %}
+
                     <div class="list">
                         <a href="/anime/{{ anime.id }}" class="anime-card">
                             <img src="{{ url_for('static', filename='images/' + anime.image) }}">
@@ -31,6 +34,7 @@
                         <p>You haven't marked anything as watched yet.</p>
                     </div>
                     {% endfor %}
+                    
                 </div>
             </div>
         </div>

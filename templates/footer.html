@@ -1,6 +1,43 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/footer.css') }}">
 
 <div class="footer-container">
-    <h1>&copy; 2026 MiraNex</h1>
-    <p>All rights reserved.</p>
+
+    <div class="upper-section">
+
+        <div class="left-side">
+            <div class="top">
+                <img src="{{ url_for('static', filename = 'images/miranex.png') }}" alt="miranex">
+                <h2>MiraNex</h2>
+            </div>
+
+            <div class="bottom">
+                <p>Your next favorite anime is one search away.</p>
+            </div>
+        </div>
+
+        <div class="right-side">
+
+            <div class="explore-section">
+
+                <h2>Explore</h2>
+
+                <div class="links">
+                    <a href="{{ url_for('home') }}">Home</a>
+                    <a href="{{ url_for('watchlist') }}">Watchlist</a>
+                    <a href="{{ url_for('watched') }}">Watched</a>
+                    <a href="{{ url_for('about') }}">About Us</a>
+                </div>
+            </div>
+
+            <div class="contact">
+                <h2>Contact us at: </h2>
+                <p>miranex@gmail.com</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="lower-section">
+        <label>&copy; 2026 MiraNex. All rights reserved.</label>
+    </div>
 </div>

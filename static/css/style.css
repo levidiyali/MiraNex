@@ -15,6 +15,7 @@ body {
 
 main {
     flex: 1;
+    min-height: 100vh;
 }
 
 * {
@@ -228,6 +229,18 @@ body {
     background-color: #19283a;
     padding: 30px;
     width: 380px;
+}
+
+.no-result{
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+
+.no-result p{
+    font-size: 16px;
 }
 
 @media (max-width: 1024px) {

@@ -27,6 +27,11 @@
                             <h2>{{ anime.name }}</h2>
                         </a>
                     </div>
+
+                    {% else %}
+                    <div class="no-result">
+                        <p>No Results Found</p>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
