@@ -200,11 +200,17 @@ def browse():
     if request.args.get('sort') == 'rating':
         query = query.order_by(Anime.rating.desc())
 
-    anime_list = query.all()
+    page = request.args.get('page', 1, type=int)
+    pagination = query.paginate(page=page, per_page=20, error_out=False)
+
+    filter_args = request.args.to_dict(flat=False)
+    filter_args.pop('page', None)
 
     return render_template(
         'browse.html',
-        anime_list=anime_list
+        anime_list=pagination.items,
+        pagination=pagination,
+        filter_args=filter_args
     )
 
 @app.route('/signup', methods=['GET', 'POST'])

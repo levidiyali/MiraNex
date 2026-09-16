@@ -21,11 +21,11 @@
     gap: 50px;
 }
 
-.text-list a{
+.text-list a {
     color: rgb(197, 197, 197);
 }
 
-.text-list a:hover{
+.text-list a:hover {
     color: white;
 }
 
@@ -53,20 +53,6 @@ a {
     font-size: 14px;
 }
 
-#logout {
-    text-align: center;
-    font-weight: bold;
-    padding: 8px;
-    background-color: rgb(26, 106, 255);
-    border-radius: 5px;
-    width: 64px;
-    height: 22px;
-    font-size: 14px;
-}
-
-#logout:hover{
-    transform: scale(1.02);
-}
 
 #signup:hover {
     transform: scale(1.02);
@@ -118,24 +104,68 @@ a {
     background-color: #1a293a;
     border-radius: 6px;
     padding: 8px 14px;
+    min-width: 170px;
+    overflow: hidden;
 }
 
 .profile-dropdown.open {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    z-index: 2;
+    border: 1px solid gray;
 }
 
+
 #delete-account-btn {
-    background-color: #db2929;
+    background-color: transparent;
     color: whitesmoke;
     border: none;
-    padding: 8px;
-    border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
     white-space: nowrap;
-    width: fit-content;
-    margin: 10px;
 }
+
+#delete-account-form {
+    display: flex;
+    align-items: center;
+}
+
+#delete-account-form button[type=submit]{
+    margin: 0;
+    padding: 12px;
+}
+
+#delete-account-form img{
+    width: 17px;
+    height: 17px;
+}
+
+#logout-btn {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px;
+}
+
+#logout-btn:hover {
+    transform: scale(1.02);
+}
+
+.log-out{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    padding-bottom: 5px;
+}
+
+.log-out img{
+    width: 20px;
+    height: 20px;
+}
+
+
+
 
 /* For delete modal */
 
@@ -181,7 +211,7 @@ a {
     color: whitesmoke;
 }
 
-.confirm-box h3{
+.confirm-box h3 {
     letter-spacing: 1px;
 }
 
@@ -211,7 +241,6 @@ a {
     background-color: #db2929;
     color: whitesmoke;
 }
-
 
 @media (max-width: 1024px) {
     .nav-bar {
@@ -254,15 +283,45 @@ a {
 
     .mobile-menu .delete-account-btn-mobile {
         width: fit-content;
-        background-color: #db2929;
-        margin: 0;
-        cursor: pointer;
-        color: whitesmoke;
-        border: none;
-        padding: 8px;
-        border-radius: 6px;
-        font-weight: bold;
+        background-color: transparent;
+        color: #eb4646;
         white-space: nowrap;
+        font-weight: normal;
+        margin: 0;
+        padding: 0;
+        font-size: 16px;
+    }
+
+    .phone-profile {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        gap: 10px;
+        border-top: 1px solid gray;
+        padding-top: 15px;
+    }
+
+    .profile-icon {
+        background-color: rgb(164, 164, 255);
+        padding: 5px;
+        border-radius: 100px;
+    }
+
+    .account-options {
+        display: flex;
+        justify-content: start;
+        flex-direction: column;
+        font-size: 16px;
+        gap: 10px;
+    }
+
+    .logout-link {
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .logout-link:hover {
+        transform: scale(1.02);
     }
 }
 
@@ -283,5 +342,4 @@ a {
     .confirm-box p {
         font-size: 14px;
     }
-
 }

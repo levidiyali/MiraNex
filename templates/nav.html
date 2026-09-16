@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/nav.css') }}">
 
 <div class="nav-bar">
     <div class="logo">
@@ -13,24 +13,32 @@
 
     <div class="sign">
         {% if current_user.is_authenticated %}
-        <div class="profile-menu">
+            <div class="profile-menu">
 
-            <button type="button" id="profile-toggle" class="profile-icon">👤</button>
+                <button type="button" id="profile-toggle" class="profile-icon">👤</button>
 
-            <div class="profile-dropdown" id="profile-dropdown">
-                <form method="POST" action="{{ url_for('delete_account') }}" id="delete-account-form">
-                    <button type="submit" id="delete-account-btn">Delete Account</button>
-                </form>
+                <div class="profile-dropdown" id="profile-dropdown">
+
+                    <div class="log-out">
+                        <img src="{{ url_for('static', filename = 'images/logout.png') }}" alt="logout">
+                        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+                        
+                    </div>
+
+                    <form method="POST" action="{{ url_for('delete_account') }}" id="delete-account-form">
+                        <img src="{{ url_for('static', filename = 'images/disposal.png') }}" alt="trash">
+                        <button type="submit" id="delete-account-btn">Delete Account</button>
+                    </form>
+
+                </div>
+
             </div>
 
-        </div>
-
-        <span>Hi, {{ current_user.username }}</span>
-        <a href="{{ url_for('logout') }}" id="logout">Logout</a>
+            <span>Hi, {{ current_user.username }}</span>
 
         {% else %}
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
         {% endif %}
 
     </div>
@@ -50,17 +58,39 @@
 
     {% if current_user.is_authenticated %}
 
-    <span>Hi, {{ current_user.username }}</span>
+        <!--<div class="phone-profile">
+            <button type="button" id="profile-toggle" class="profile-icon">👤</button>
+            <span>Hi, {{ current_user.username }}</span>
+        </div>
 
-    <a href="{{ url_for('logout') }}" id="logout">Logout</a>
+        <a href="{{ url_for('logout') }}" id="logout">Logout</a>
 
-    <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
-        <button type="submit" class="delete-account-btn-mobile">Delete Account</button>
-    </form>
+        <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
+            <button type="submit" class="delete-account-btn-mobile">Delete Account</button>
+        </form> -->
 
+        <div class="phone-profile">
+            <button type="button" id="profile-toggle" class="profile-icon">👤</button>
+            <span>Hi, {{ current_user.username }}</span>
+        </div>
+
+        <details>
+            <summary>Manage Account</summary>
+
+            <div class="account-options">
+                <a href="{{ url_for('logout') }}" id="logout" class="logout-link">Log out</a>
+
+                <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
+                    <button type="submit" class="delete-account-btn-mobile">Delete account</button>
+                </form>
+            </div>
+            
+        </details>
+
+        
     {% else %}
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
     {% endif %}
 
 </div>
@@ -82,65 +112,71 @@
 </div>
 
 <script>
-    document.getElementById('menu-toggle').addEventListener('click', function () {
-        document.getElementById('mobile-menu').classList.toggle('open');
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        document.getElementById("mobile-menu").classList.toggle("open");
     });
 </script>
 
 <script>
     (function () {
-        const toggle = document.getElementById('profile-toggle');
-        const dropdown = document.getElementById('profile-dropdown');
-        const deleteForm = document.getElementById('delete-account-form');
+        const toggle = document.getElementById("profile-toggle");
+        const dropdown = document.getElementById("profile-dropdown");
+        const deleteForm = document.getElementById("delete-account-form");
 
         if (toggle && dropdown) {
-            toggle.addEventListener('click', function (event) {
+            toggle.addEventListener("click", function (event) {
                 event.stopPropagation();
-                dropdown.classList.toggle('open');
+                dropdown.classList.toggle("open");
             });
 
-            document.addEventListener('click', function (event) {
-                if (dropdown.classList.contains('open') && !dropdown.contains(event.target) && event.target !== toggle) {
-                    dropdown.classList.remove('open');
+            document.addEventListener("click", function (event) {
+                if (
+                    dropdown.classList.contains("open") &&
+                    !dropdown.contains(event.target) &&
+                    event.target !== toggle
+                ) {
+                    dropdown.classList.remove("open");
                 }
             });
         }
 
-        const overlay = document.getElementById('confirm-overlay');
-        const cancelBtn = document.getElementById('confirm-cancel');
-        const confirmBtn = document.getElementById('confirm-delete');
+        const overlay = document.getElementById("confirm-overlay");
+        const cancelBtn = document.getElementById("confirm-cancel");
+        const confirmBtn = document.getElementById("confirm-delete");
         let pendingForm = null;
 
         function showConfirm(form) {
             pendingForm = form;
-            overlay.classList.add('open');
+            overlay.classList.add("open");
         }
 
         function hideConfirm() {
             pendingForm = null;
-            overlay.classList.remove('open');
+            overlay.classList.remove("open");
         }
 
-        cancelBtn.addEventListener('click', hideConfirm);
+        cancelBtn.addEventListener("click", hideConfirm);
 
-        confirmBtn.addEventListener('click', function () {
+        confirmBtn.addEventListener("click", function () {
             if (pendingForm) {
                 pendingForm.submit();
             }
         });
 
         if (deleteForm) {
-            deleteForm.addEventListener('submit', function (event) {
+            deleteForm.addEventListener("submit", function (event) {
                 event.preventDefault();
                 showConfirm(deleteForm);
             });
         }
 
-        document.querySelectorAll('.delete-account-form-mobile').forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                showConfirm(form);
+        document
+            .querySelectorAll(".delete-account-form-mobile")
+            .forEach(function (form) {
+                form.addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    showConfirm(form);
+                });
             });
-        });
     })();
 </script>
