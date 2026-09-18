@@ -37,7 +37,7 @@
             <span>Hi, {{ current_user.username }}</span>
 
         {% else %}
-            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('login') }}" id="loginn">Login</a>
             <a href="{{ url_for('signup') }}" id="signup">Sign Up</a>
         {% endif %}
 
@@ -111,6 +111,18 @@
     </div>
 </div>
 
+<div class="confirm-overlay" id="logout-confirm-overlay">
+    <div class="confirm-box">
+        <img src="{{ url_for('static', filename = 'images/logout.png') }}" alt="logout">
+        <h3>Log Out</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="confirm-actions">
+            <button type="button" id="logout-confirm-cancel">Cancel</button>
+            <button type="button" id="logout-confirm-yes">Yes, Log out</button>
+        </div>
+    </div>
+</div>
+
 <script>
     document.getElementById("menu-toggle").addEventListener("click", function () {
         document.getElementById("mobile-menu").classList.toggle("open");
@@ -178,5 +190,25 @@
                     showConfirm(form);
                 });
             });
+
+        const mobileLogoutLink = document.getElementById("logout");
+        const logoutOverlay = document.getElementById("logout-confirm-overlay");
+        const logoutCancelBtn = document.getElementById("logout-confirm-cancel");
+        const logoutConfirmBtn = document.getElementById("logout-confirm-yes");
+
+        if (mobileLogoutLink && logoutOverlay) {
+            mobileLogoutLink.addEventListener("click", function (event) {
+                event.preventDefault();
+                logoutOverlay.classList.add("open");
+            });
+
+            logoutCancelBtn.addEventListener("click", function () {
+                logoutOverlay.classList.remove("open");
+            });
+
+            logoutConfirmBtn.addEventListener("click", function () {
+                window.location.href = mobileLogoutLink.href;
+            });
+        }
     })();
 </script>

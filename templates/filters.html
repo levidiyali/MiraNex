@@ -12,12 +12,12 @@
         </div>
 
         <div class="field">
-            <p>Type</p>
+            <p>Mood</p>
             <details class="filter-dropdown" name="filters">
                 <summary>Select</summary>
                 <div class="filter-options">
-                    {% for t in ['Funny', 'Calm', 'Intense', 'Emotional', 'Scary', 'Mysterious', 'Wholesome', 'Another World',
-                    'Historical', 'Sweet', 'Dark', 'Superpowers', 'Competitive', 'Science Fiction'] %}
+
+                    {% for t in ['Happy', 'Funny', 'Emotional', 'Exciting', 'Relaxing', 'Scary', 'Romantic', 'Mysterious', 'Competitive'] %}
                     <label>
                         <input type="checkbox" name="type" value="{{ t }}" {% if t in request.args.getlist('type')
                             %}checked{% endif %}>
@@ -50,7 +50,7 @@
                 <summary>Select</summary>
                 <div class="filter-options">
                     {% for g in ['Action', 'Adventure', 'Comedy', 'Romance', 'Fantasy', 'Isekai', 'Drama', 'Horror',
-                    'Slice of Life', 'School', 'Iyashikei',
+                    'Slice of Life', 'School', 'Iyashikei', 'Mecha',
                     'Sci-Fi', 'Mystery', 'Sports', 'Supernatural', 'Thriller', 'Psychological', 'Martial Arts'] %}
                     <label>
                         <input type="checkbox" name="genre" value="{{ g }}" {% if g in request.args.getlist('genre')

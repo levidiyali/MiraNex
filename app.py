@@ -84,21 +84,35 @@ class Watched(db.Model):
 
     __table_args__ = (db.UniqueConstraint('user_id', 'anime_id'),)
 
+# TYPE_GENRE_MAP = {
+#     'Funny': ['Comedy'],
+#     'Soothing': ['Iyashikei', 'Slice of Life'],
+#     'Historical': ['Historical'],
+#     'Emotional': ['Drama'],
+#     'Scary': ['Horror'],
+#     'Mysterious': ['Mystery'],
+#     'Wholesome': ['Slice of Life', 'Comedy'],
+#     'Intense': ['Action', 'Thriller'],
+#     'Sweet': ['Romance', 'Iyashikei'],
+#     'Dark': ['Horror', 'Psychological'],
+#     'Superpowers': ['Supernatural'],
+#     'Competitive': ['Sports'],
+#     'Another World' : ['Isekai'],
+#     'Science Fiction' : ['Sci-Fi'],
+#     'School' : ['School'],
+#     'Robot' : ['Mecha']
+# }
+
 TYPE_GENRE_MAP = {
-    'Funny': ['Comedy'],
-    'Calm': ['Iyashikei'],
-    'Historical': ['Historical'],
-    'Emotional': ['Drama'],
-    'Scary': ['Horror'],
-    'Mysterious': ['Mystery'],
-    'Wholesome': ['Slice of Life', 'Comedy'],
-    'Intense': ['Action', 'Thriller'],
-    'Sweet': ['Romance', 'Iyashikei'],
-    'Dark': ['Horror', 'Psychological'],
-    'Superpowers': ['Supernatural'],
-    'Competitive': ['Sports'],
-    'Another World' : ['Isekai'],
-    'Science Fiction' : ['Sci-Fi']
+    'Happy' : ['Comedy', 'Slice of Life'],
+    'Funny' : ['Comedy'],
+    'Emotional' : ['Drama'],
+    'Exciting' : ['Action', 'Adventure'],
+    'Relaxing' : ['Iyashikei'],
+    'Scary' : ['Horror', 'Psychological'],
+    'Romantic' : ['Romance'],
+    'Mysterious' : ['Mystery'],
+    'Competitive' : ['Martial Arts', 'Sports']
 }
 
 TIME_BUCKETS = {
@@ -229,8 +243,6 @@ def signup():
             errors['username'] = 'Username is required.'
         elif len(username) > 20:
             errors['username'] = 'Username must be 20 characters or fewer.'
-        elif User.query.filter_by(username=username).first():
-            errors['username'] = 'That username is taken.'
 
         if not email:
             errors['email'] = 'Email is required.'

@@ -42,14 +42,20 @@ a {
     text-decoration: none;
 }
 
+#loginn {
+    color: rgb(197 197 197);
+}
+
+#loginn:hover{
+    color: white;
+}
+
 #signup {
     text-align: center;
     font-weight: bold;
-    padding: 8px;
+    padding: 9px 15px;
     background-color: rgb(26, 106, 255);
     border-radius: 5px;
-    width: 64px;
-    height: 22px;
     font-size: 14px;
 }
 
@@ -242,6 +248,16 @@ a {
     color: whitesmoke;
 }
 
+#logout-confirm-cancel {
+    background-color: #3a4a5c;
+    color: whitesmoke;
+}
+
+#logout-confirm-yes {
+    background-color: rgb(26, 106, 255);
+    color: whitesmoke;
+}
+
 @media (max-width: 1024px) {
     .nav-bar {
         gap: 0;
@@ -312,12 +328,12 @@ a {
         justify-content: start;
         flex-direction: column;
         font-size: 16px;
-        gap: 10px;
+        gap: 12px;
     }
 
     .logout-link {
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 13px;
     }
 
     .logout-link:hover {
