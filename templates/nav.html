@@ -58,17 +58,6 @@
 
     {% if current_user.is_authenticated %}
 
-        <!--<div class="phone-profile">
-            <button type="button" id="profile-toggle" class="profile-icon">👤</button>
-            <span>Hi, {{ current_user.username }}</span>
-        </div>
-
-        <a href="{{ url_for('logout') }}" id="logout">Logout</a>
-
-        <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
-            <button type="submit" class="delete-account-btn-mobile">Delete Account</button>
-        </form> -->
-
         <div class="phone-profile">
             <button type="button" id="profile-toggle" class="profile-icon">👤</button>
             <span>Hi, {{ current_user.username }}</span>

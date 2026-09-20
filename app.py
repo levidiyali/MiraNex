@@ -84,40 +84,22 @@ class Watched(db.Model):
 
     __table_args__ = (db.UniqueConstraint('user_id', 'anime_id'),)
 
-# TYPE_GENRE_MAP = {
-#     'Funny': ['Comedy'],
-#     'Soothing': ['Iyashikei', 'Slice of Life'],
-#     'Historical': ['Historical'],
-#     'Emotional': ['Drama'],
-#     'Scary': ['Horror'],
-#     'Mysterious': ['Mystery'],
-#     'Wholesome': ['Slice of Life', 'Comedy'],
-#     'Intense': ['Action', 'Thriller'],
-#     'Sweet': ['Romance', 'Iyashikei'],
-#     'Dark': ['Horror', 'Psychological'],
-#     'Superpowers': ['Supernatural'],
-#     'Competitive': ['Sports'],
-#     'Another World' : ['Isekai'],
-#     'Science Fiction' : ['Sci-Fi'],
-#     'School' : ['School'],
-#     'Robot' : ['Mecha']
-# }
 
 TYPE_GENRE_MAP = {
     'Happy' : ['Comedy', 'Slice of Life'],
     'Funny' : ['Comedy'],
     'Emotional' : ['Drama'],
     'Exciting' : ['Action', 'Adventure'],
-    'Relaxing' : ['Iyashikei'],
-    'Scary' : ['Horror', 'Psychological'],
+    'Relaxing' : ['Iyashikei', 'Slice of Life'],
+    'Scary' : ['Horror'],
     'Romantic' : ['Romance'],
     'Mysterious' : ['Mystery'],
     'Competitive' : ['Martial Arts', 'Sports']
 }
 
 TIME_BUCKETS = {
-    'Quick Watch': (1, 3),
-    'Weekend': (4, 13),
+    'Quick Watch': (1, 1),
+    'Weekend': (2, 13),
     'Week': (14, 26),
     'Month': (27, 50),
     'Long Haul': (51, None)
@@ -126,6 +108,7 @@ TIME_BUCKETS = {
 
 BEGINNER_MAX_EPISODES = 24
 BEGINNER_GENRES = ['Slice of Life', 'Comedy', 'Romance']
+BEGINNER_EXCLUDE_GENRES = ['Drama', 'Psychological', 'Horror']
 
 
 def apply_filters(query):
@@ -136,7 +119,12 @@ def apply_filters(query):
     times = request.args.getlist('time')
 
     if search:
-        query = query.filter(Anime.name.contains(search))
+        matching_ids = normalized_match_ids(search)
+
+        if matching_ids:
+            query = query.filter(db.or_(Anime.name.contains(search), Anime.id.in_(matching_ids)))
+        else:
+            query = query.filter(Anime.name.contains(search))
 
     if types:
         for t in types:
@@ -169,6 +157,20 @@ def apply_filters(query):
 
     return query
 
+def normalized_match_ids(search):
+    search_normalized = re.sub(r'[^a-z0-9]', '', search.lower())
+    if not search_normalized:
+        return []
+
+    all_anime = Anime.query.with_entities(Anime.id, Anime.name).all()
+
+    matches = []
+    for anime_id, name in all_anime:
+        name_normalized = re.sub(r'[^a-z0-9]', '', name.lower())
+        if search_normalized in name_normalized:
+            matches.append(anime_id)
+
+    return matches
 
 @app.route('/')
 def home():
@@ -178,7 +180,7 @@ def home():
         Anime.query
         .filter(Anime.episodes <= BEGINNER_MAX_EPISODES)
         .filter(db.or_(*[Anime.genres.contains(g) for g in BEGINNER_GENRES]))
-        .filter(Anime.format == 'TV')
+        .filter(db.and_(*[~Anime.genres.contains(g) for g in BEGINNER_EXCLUDE_GENRES]))
         .order_by(Anime.rating.desc())
         .limit(5)
         .all()
@@ -209,10 +211,23 @@ def browse():
             query
             .filter(Anime.episodes <= BEGINNER_MAX_EPISODES)
             .filter(db.or_(*[Anime.genres.contains(g) for g in BEGINNER_GENRES]))
+            .filter(db.and_(*[~Anime.genres.contains(g) for g in BEGINNER_EXCLUDE_GENRES]))
         )
 
-    if request.args.get('sort') == 'rating':
-        query = query.order_by(Anime.rating.desc())
+    SORT_OPTIONS = {
+        'rating_desc': Anime.rating.desc(),
+        'rating_asc': Anime.rating.asc(),
+        'name_asc': Anime.name.asc(),
+        'name_desc': Anime.name.desc(),
+        'year_desc': Anime.release_year.desc(),
+        'year_asc': Anime.release_year.asc(),
+        'episodes_desc': Anime.episodes.desc(),
+        'episodes_asc': Anime.episodes.asc()
+    }
+
+    sort = request.args.get('sort')
+    if sort in SORT_OPTIONS:
+        query = query.order_by(SORT_OPTIONS[sort])
 
     page = request.args.get('page', 1, type=int)
     pagination = query.paginate(page=page, per_page=20, error_out=False)
@@ -224,7 +239,8 @@ def browse():
         'browse.html',
         anime_list=pagination.items,
         pagination=pagination,
-        filter_args=filter_args
+        filter_args=filter_args,
+        current_sort=sort
     )
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -235,7 +251,7 @@ def signup():
 
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip()
+        email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
 
@@ -279,7 +295,7 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = request.form.get('email', '').strip().lower()
         password = request.form.get('password')
 
         user = User.query.filter_by(email=email).first()

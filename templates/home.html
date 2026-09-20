@@ -14,10 +14,11 @@
 
     <main>
         <div class="container">
+            
             <div class="anime-list">
                 <div class="label">
                     <p>Top Rated</p>
-                    <a href="/browse?sort=rating">View All</a>
+                    <a href="/browse?sort=rating_desc">View All</a>
                 </div>
                 <div class="anime-grid">
                     {% for anime in top_rated %}
@@ -34,7 +35,7 @@
             <div class="anime-list">
                 <div class="label">
                     <p>Beginner Friendly</p>
-                    <a href="/browse?beginner=1">View All</a>
+                    <a href="/browse?beginner=1&sort=rating_desc">View All</a>
                 </div>
                 <div class="anime-grid">
                     {% for anime in beginner_friendly %}
