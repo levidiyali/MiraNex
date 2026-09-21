@@ -26,6 +26,7 @@
                     </div>
 
                     <form method="POST" action="{{ url_for('delete_account') }}" id="delete-account-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <img src="{{ url_for('static', filename = 'images/disposal.png') }}" alt="trash">
                         <button type="submit" id="delete-account-btn">Delete Account</button>
                     </form>
@@ -70,6 +71,7 @@
                 <a href="{{ url_for('logout') }}" id="logout" class="logout-link">Log out</a>
 
                 <form method="POST" action="{{ url_for('delete_account') }}" class="delete-account-form-mobile">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="delete-account-btn-mobile">Delete account</button>
                 </form>
             </div>

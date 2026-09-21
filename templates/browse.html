@@ -20,31 +20,48 @@
                     <div class="label">
                         <p>Results</p>
 
-                        <form method="GET" action="{{ url_for('browse') }}" class="sort-form">
+                        <div class="sort-and-random">
 
-                            {% for key, value in filter_args.items() %}
+                            <form method="GET" action="{{ url_for('browse') }}" class="sort-form">
 
-                                {% if key != 'sort' %}
+                                {% for key, value in filter_args.items() %}
+
+                                    {% if key != 'sort' %}
+                                        {% for v in value %}
+                                            <input type="hidden" name="{{ key }}" value="{{ v }}">
+                                        {% endfor %}
+
+                                    {% endif %}
+                                {% endfor %}
+
+                                <select name="sort" onchange="this.form.submit()">
+                                    <option value="">Sort by</option>
+                                    <option value="rating_desc" {% if current_sort == 'rating_desc' %}selected{% endif %}>Rating: High to Low</option>
+                                    <option value="rating_asc" {% if current_sort == 'rating_asc' %}selected{% endif %}>Rating: Low to High</option>
+                                    <option value="name_asc" {% if current_sort == 'name_asc' %}selected{% endif %}>Name: A-Z</option>
+                                    <option value="name_desc" {% if current_sort == 'name_desc' %}selected{% endif %}>Name: Z-A</option>
+                                    <option value="year_desc" {% if current_sort == 'year_desc' %}selected{% endif %}>Newest</option>
+                                    <option value="year_asc" {% if current_sort == 'year_asc' %}selected{% endif %}>Oldest</option>
+                                    <option value="episodes_desc" {% if current_sort == 'episodes_desc' %}selected{% endif %}>Episodes: High to Low</option>
+                                    <option value="episodes_asc" {% if current_sort == 'episodes_asc' %}selected{% endif %}>Episodes: Low to High</option>
+                                </select>
+                            </form>
+
+                            <form method="GET" action="{{ url_for('random_anime') }}" class="random-form">
+
+                                {% for key, value in filter_args.items() %}
+
                                     {% for v in value %}
                                         <input type="hidden" name="{{ key }}" value="{{ v }}">
                                     {% endfor %}
 
-                                {% endif %}
-                            {% endfor %}
+                                {% endfor %}
 
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="">Sort by</option>
-                                <option value="rating_desc" {% if current_sort == 'rating_desc' %}selected{% endif %}>Rating: High to Low</option>
-                                <option value="rating_asc" {% if current_sort == 'rating_asc' %}selected{% endif %}>Rating: Low to High</option>
-                                <option value="name_asc" {% if current_sort == 'name_asc' %}selected{% endif %}>Name: A-Z</option>
-                                <option value="name_desc" {% if current_sort == 'name_desc' %}selected{% endif %}>Name: Z-A</option>
-                                <option value="year_desc" {% if current_sort == 'year_desc' %}selected{% endif %}>Newest</option>
-                                <option value="year_asc" {% if current_sort == 'year_asc' %}selected{% endif %}>Oldest</option>
-                                <option value="episodes_desc" {% if current_sort == 'episodes_desc' %}selected{% endif %}>Episodes: High to Low</option>
-                                <option value="episodes_asc" {% if current_sort == 'episodes_asc' %}selected{% endif %}>Episodes: Low to High</option>
-                            </select>
-                        </form>
+                                <button type="submit" id="random-shuffle"><img src="{{ url_for('static', filename='images/shuffle.png') }}" alt="shuffle"></button>
+                            </form>
+                        </div>
                     </div>
+
 
                     <div class="anime-grid">
                         {% for anime in anime_list %}

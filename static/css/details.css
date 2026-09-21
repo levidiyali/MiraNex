@@ -173,6 +173,255 @@ body{
     color: inherit;
 }
 
+/* Comments section */
+
+.comments-section {
+    margin-top: 40px;
+    margin-bottom: 75px;
+    background-color: #19283a;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.login-to-comment {
+    margin: 15px 5px;
+}
+
+.no-comments {
+    display: flex;
+    justify-content: center;
+    margin: 15px 5px;
+}
+
+.comment-list {
+    border-top: 1px solid gray;
+    padding-top: 15px;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.comment-form textarea {
+    background-color: var(--nav-color);
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    color: rgb(180, 180, 180);
+    font-family: inherit;
+    resize: vertical;
+    min-height: 40px;
+    margin-top: 15px;
+    border: 1px solid gray;
+}
+
+.char-counter {
+    align-self: flex-end;
+    font-size: 12px;
+    color: rgb(150, 150, 150);
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.post-cancel-btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    gap: 15px;
+}
+
+#comment-cancel-btn {
+    background: none;
+    border: 1px solid rgb(100, 100, 100);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#comment-cancel-btn:hover {
+    background-color: gray;
+}
+
+#post-comment-btn {
+    align-self: flex-end;
+    background-color: var(--button-color);
+    color: whitesmoke;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.comment {
+    background-color: var(--nav-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-header .profilee {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-header .profile-icon {
+    border-radius: 50px;
+    background-color: rgb(164, 164, 255);
+    padding: 5px;
+    border-radius: 100px;
+}
+
+.comment-user {
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: rgb(150, 150, 150);
+}
+
+.edited-tag {
+    font-style: italic;
+    margin-left: 4px;
+}
+
+.comment-content {
+    margin-left: 50px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.delete-comment-form button {
+    background: none;
+    border: none;
+    color: #df3333;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+
+}
+
+.delete-comment-form button:hover {
+    text-decoration: underline;
+}
+
+.edit-comment-form {
+    margin-top: 8px;
+}
+
+.edit-comment-form textarea {
+    width: 100%;
+    background-color: #101822;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    color: rgb(180, 180, 180);
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+    box-sizing: border-box;
+}
+
+.edit-comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.edit-comment-actions button {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.comment-owner-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.edit-comment-btn {
+    background: none;
+    border: none;
+    color: rgb(150, 150, 150);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.edit-comment-actions button[type=submit] {
+    background-color: var(--button-color);
+    color: whitesmoke;
+    font-weight: bold;
+}
+
+.edit-comment-actions button[type=button] {
+    background: none;
+    border: 1px solid rgb(100, 100, 100);
+    color: whitesmoke;
+}
+
+.edit-comment-actions button[type=button]:hover {
+    background-color: gray;
+}
+
+.login-to-comment,
+.no-comments {
+    font-size: 14px;
+    color: rgb(150, 150, 150);
+}
+
+.load-more-comments-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.load-more-comments-container a {
+    color: whitesmoke;
+    background-color: var(--nav-color);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#comment-delete-overlay .confirm-box h3{
+    letter-spacing: 0;
+    color: whitesmoke;
+}
+
+#comment-delete-cancel {
+    background-color: #3a4a5c;
+    color: whitesmoke;
+}
+
+#comment-delete-confirm {
+    background-color: #db2929;
+    color: whitesmoke;
+}
+
 @media (max-width: 1024px) {
     .container {
         margin-left: 0;

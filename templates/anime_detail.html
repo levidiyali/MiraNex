@@ -1,144 +1,321 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
-    <title>{{ anime.name }} - MiraNex</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/details.css') }}">
-</head>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="{{ url_for('static', filename = 'images/miranex.png') }}">
+        <title>{{ anime.name }} - MiraNex</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/details.css') }}">
+    </head>
 
-<body>
-    {% include 'nav.html' %}
+    <body>
+        {% include 'nav.html' %}
 
-    <div class="container">
+        <div class="container">
 
-        <div class="left-side">
+            <div class="left-side">
 
-            <div class="first-part">
-                <img src="{{ url_for('static', filename='images/' + anime.image) }}">
-            </div>
+                <div class="first-part">
+                    <img src="{{ url_for('static', filename = 'images/' + anime.image) }}">
+                </div>
 
-            <div class="second-part">
-                <h1>{{ anime.name }}</h1>
+                <div class="second-part">
+                    <h1>{{ anime.name }}</h1>
 
-                <div class="list-actions">
-                    {% if current_user.is_authenticated %}
+                    <div class="list-actions">
+                        {% if current_user.is_authenticated %}
 
-                    <form method="POST" action="{{ url_for('toggle_list', id=anime.id) }}" id="list-form"
-                        data-in-watchlist="{{ 'true' if in_watchlist else 'false' }}"
-                        data-in-watched="{{ 'true' if in_watched else 'false' }}">
+                            <form
+                                method="POST"
+                                action="{{ url_for('toggle_list', id = anime.id) }}"
+                                id="list-form"
+                                data-in-watchlist="{{ 'true' if in_watchlist else 'false' }}"
+                                data-in-watched="{{ 'true' if in_watched else 'false' }}"
+                            >
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                        <select name="list_type" id="list-type-select">
-                            <option value="watchlist">Watchlist</option>
-                            <option value="watched">Watched</option>
-                        </select>
+                                <select name="list_type" id="list-type-select">
+                                    <option value="watchlist">Watchlist</option>
+                                    <option value="watched">Watched</option>
+                                </select>
 
-                        <button type="submit" id="list-action-btn">Add</button>
-                    </form>
+                                <button type="submit" id="list-action-btn">Add</button>
+                            </form>
 
-                    {% else %}
-                    <div class="login-to-add">
-                        <p><a href="{{ url_for('login') }}">Log in</a> to add this to your list.</p>
+                        {% else %}
+                            <div class="login-to-add">
+                                <p><a href="{{ url_for('login') }}">Log in</a> to add this to your list.</p>
+                            </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
+                </div>
+
+
+                <div class="side-details">
+                    <div class="item">
+                        <label>Rating</label>
+                        <p>{{ anime.rating }} ⭐</p>
+                    </div>
+
+                    <div class="item">
+                        <label>Genres</label>
+                        <div class="genre-list">
+                            {% for g in anime.genres.split(',') %}
+                                <p>{{ g.strip() }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <label>Format</label>
+                        <p>{{ anime.format }}</p>
+                    </div>
+
+                    <div class="item">
+                        <label>Seasons</label>
+                        <p>{{ anime.seasons }}</p>
+                    </div>
+
+                    <div class="item">
+                        <label>Episodes</label>
+                        <p>{{ anime.episodes }}</p>
+                    </div>
+
+                    <div class="item">
+                        <label>Episode Length</label>
+                        <p>{{ anime.episode_length }}</p>
+                    </div>
+
+                    <div class="item">
+                        <label>Release Year</label>
+                        <p>{{ anime.release_year }}</p>
+                    </div>
                 </div>
             </div>
 
-
-            <div class="side-details">
-                <div class="item">
-                    <label>Rating</label>
-                    <p>{{ anime.rating }} ⭐</p>
+            <div class="right-side">
+                <div class="desc">
+                    <h2>Description</h2>
+                    <p>{{ anime.description }}</p>
                 </div>
 
-                <div class="item">
-                    <label>Genres</label>
-                    <div class="genre-list">
-                        {% for g in anime.genres.split(',') %}
-                        <p>{{ g.strip() }}</p>
+                <div class="top-bg-img">
+                    <img src="{{ url_for('static', filename = 'images/' + anime.detail_image) }}">
+                </div>
+
+                <div class="recommended">
+                    <h2>You Might Also Like</h2>
+                    <div class="anime-grid">
+                        {% for rec in recommended %}
+                            <div class="list">
+                                <a href="/anime/{{ rec.id }}" class="anime-card">
+                                    <img src="{{ url_for('static', filename = 'images/' + rec.image) }}">
+                                    <h2>{{ rec.name }}</h2>
+                                </a>
+                            </div>
+                        {% else %}
+                            <p>No similar anime found.</p>
                         {% endfor %}
                     </div>
                 </div>
 
-                <div class="item">
-                    <label>Format</label>
-                    <p>{{ anime.format }}</p>
-                </div>
+                <div class="comments-section">
+                    <h2>Comments</h2>
 
-                <div class="item">
-                    <label>Seasons</label>
-                    <p>{{ anime.seasons }}</p>
-                </div>
+                    {% if current_user.is_authenticated %}
+                        <form method="POST" action="{{ url_for('anime_detail', id = anime.id) }}" class="comment-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <div class="item">
-                    <label>Episodes</label>
-                    <p>{{ anime.episodes }}</p>
-                </div>
+                            <textarea name="content" id="comment-textarea" placeholder="Share your thoughts..." required maxlength="1000"></textarea>
+                            <span class="char-counter" id="comment-char-counter">0/1000</span>
 
-                <div class="item">
-                    <label>Episode Length</label>
-                    <p>{{ anime.episode_length }}</p>
-                </div>
+                            <div class="post-cancel-btn">
+                                <button type="button" id="comment-cancel-btn">Cancel</button>
+                                <button type="submit" id="post-comment-btn">Post Comment</button>
+                            </div>
+                        </form>
 
-                <div class="item">
-                    <label>Release Year</label>
-                    <p>{{ anime.release_year }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="right-side">
-            <div class="desc">
-                <h2>Description</h2>
-                <p>{{ anime.description }}</p>
-            </div>
-
-            <div class="top-bg-img">
-                <img src="{{ url_for('static', filename='images/' + anime.detail_image) }}">
-            </div>
-
-            <div class="recommended">
-                <h2>You Might Also Like</h2>
-                <div class="anime-grid">
-                    {% for rec in recommended %}
-                    <div class="list">
-                        <a href="/anime/{{ rec.id }}" class="anime-card">
-                            <img src="{{ url_for('static', filename='images/' + rec.image) }}">
-                            <h2>{{ rec.name }}</h2>
-                        </a>
-                    </div>
                     {% else %}
-                    <p>No similar anime found.</p>
-                    {% endfor %}
+                        <p class="login-to-comment"><a href="{{ url_for('login') }}">Log in</a> to leave a comment.</p>
+                    {% endif %}
+
+                    <div class="comment-list">
+
+                        {% for comment in comments %}
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="profilee">
+                                        <label class="profile-icon">👤</label>
+                                        <span class="comment-user">{{ comment.user.username }}</span>
+                                    </div>
+                                    <span class="comment-date">
+                                        {{ comment.created_at.strftime('%b %d, %Y') }}
+                                        {% if comment.updated_at %}<span class="edited-tag">(edited)</span>{% endif %}
+                                    </span>
+                                </div>
+
+                                <p class="comment-content" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+                                {% if current_user.is_authenticated and current_user.user_id == comment.user_id %}
+
+                                    <form method="POST" action="{{ url_for('edit_comment', comment_id = comment.id) }}" class="edit-comment-form" id="edit-form-{{ comment.id }}" style="display: none;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                        <textarea name="content" maxlength="1000">{{ comment.content }}</textarea>
+
+                                        <div class="edit-comment-actions">
+                                            <button type="button" class="edit-cancel-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+                                            <button type="submit" id="#save-btn">Save</button>
+                                        </div>
+                                    </form>
+
+                                    <div class="comment-owner-actions" id="comment-actions-{{ comment.id }}">
+
+                                        <button type="button" class="edit-comment-btn" data-comment-id="{{ comment.id }}">Edit</button>
+
+                                        <form method="POST" action="{{ url_for('delete_comment', comment_id = comment.id) }}" class="delete-comment-form">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </div>
+
+                                {% endif %}
+                            </div>
+
+                        {% else %}
+                            <p class="no-comments">No comments yet. Be the first to share your thoughts.</p>
+                        {% endfor %}
+                    </div>
+
+                    {% if total_comments > comment_limit %}
+                        <div class="load-more-comments-container">
+                            <a href="{{ url_for('anime_detail', id = anime.id) }}?comments={{ comment_limit + 9 }}#comments">Load More Comments</a>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="confirm-overlay" id="comment-delete-overlay">
+                    <div class="confirm-box">
+                        <h3>Delete Comment</h3>
+                        <p>Delete this comment permanently?</p>
+                        <div class="confirm-actions">
+                            <button type="button" id="comment-delete-cancel">Cancel</button>
+                            <button type="button" id="comment-delete-confirm">Yes, Delete</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        (function () {
-            const form = document.getElementById('list-form');
-            if (!form) return;
+        <script>
+            (function () {
+                const form = document.getElementById("list-form");
+                if (form) {
+                    const select = document.getElementById("list-type-select");
+                    const button = document.getElementById("list-action-btn");
+                    const inWatchlist = form.dataset.inWatchlist === "true";
+                    const inWatched = form.dataset.inWatched === "true";
 
-            const select = document.getElementById('list-type-select');
-            const button = document.getElementById('list-action-btn');
-            const inWatchlist = form.dataset.inWatchlist === 'true';
-            const inWatched = form.dataset.inWatched === 'true';
+                    function updateButton() {
+                        const alreadyIn =
+                            select.value === "watchlist" ? inWatchlist : inWatched;
+                        button.textContent = alreadyIn ? "Remove" : "Add";
+                        button.className = alreadyIn ? "remove-btn" : "add-btn";
+                    }
 
-            function updateButton() {
-                const alreadyIn = select.value === 'watchlist' ? inWatchlist : inWatched;
-                button.textContent = alreadyIn ? 'Remove' : 'Add';
-                button.className = alreadyIn ? 'remove-btn' : 'add-btn';
-            }
+                    select.addEventListener("change", updateButton);
+                    updateButton();
+                }
 
-            select.addEventListener('change', updateButton);
-            updateButton();
-        })();
-    </script>
+                const cancelBtn = document.getElementById("comment-cancel-btn");
+                const commentTextarea = document.getElementById("comment-textarea");
 
-    {% include 'footer.html' %}
+                if (cancelBtn && commentTextarea) {
+                    cancelBtn.addEventListener("click", function () {
+                        commentTextarea.value = "";
+                    });
+                }
 
-</body>
+                const commentOverlay = document.getElementById("comment-delete-overlay");
+                const commentCancelBtn = document.getElementById("comment-delete-cancel");
+                const commentConfirmBtn = document.getElementById("comment-delete-confirm");
+                let pendingCommentForm = null;
+
+                function attachCommentDeleteHandlers() {
+                    document
+                        .querySelectorAll(".delete-comment-form")
+                        .forEach(function (form) {
+                            form.addEventListener("submit", function (event) {
+                                event.preventDefault();
+                                pendingCommentForm = form;
+                                commentOverlay.classList.add("open");
+                            });
+                        });
+                }
+
+                attachCommentDeleteHandlers();
+
+                if (commentCancelBtn) {
+                    commentCancelBtn.addEventListener("click", function () {
+                        pendingCommentForm = null;
+                        commentOverlay.classList.remove("open");
+                    });
+                }
+
+                if (commentConfirmBtn) {
+                    commentConfirmBtn.addEventListener("click", function () {
+                        if (pendingCommentForm) {
+                            pendingCommentForm.submit();
+                        }
+                    });
+                }
+
+                document.querySelectorAll(".edit-comment-btn").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const id = btn.dataset.commentId;
+                        document.getElementById("comment-text-" + id).style.display =
+                            "none";
+                        document.getElementById("comment-actions-" + id).style.display =
+                            "none";
+                        document.getElementById("edit-form-" + id).style.display = "block";
+                    });
+                });
+
+                document.querySelectorAll(".edit-cancel-btn").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const id = btn.dataset.commentId;
+                        document.getElementById("comment-text-" + id).style.display =
+                            "block";
+                        document.getElementById("comment-actions-" + id).style.display =
+                            "flex";
+                        document.getElementById("edit-form-" + id).style.display = "none";
+                    });
+                });
+
+                const commentCounter = document.getElementById("comment-char-counter");
+
+                if (commentTextarea && commentCounter) {
+                    function updateCharCounter() {
+                        commentCounter.textContent = commentTextarea.value.length + "/1000";
+                    }
+
+                    commentTextarea.addEventListener("input", updateCharCounter);
+                    updateCharCounter();
+                }
+
+                if (cancelBtn && commentTextarea) {
+                    cancelBtn.addEventListener("click", function () {
+                        commentTextarea.value = "";
+                        updateCharCounter();
+                    });
+                }
+            })();
+        </script>
+
+        {% include 'footer.html' %}
+
+    </body>
 
 </html>

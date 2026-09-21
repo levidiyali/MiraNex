@@ -263,6 +263,49 @@ body {
     font-size: 16px;
 }
 
+/* Random anime selector */
+
+.label-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-and-random {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
+form.random-form button[type=submit] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    padding: 6px;
+    margin: 0;
+    background-color: var(--nav-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+form.random-form button[type=submit] img {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+form.random-form button[type=submit]:hover {
+    background-color: var(--button-color);
+}
+
+.random-form button:hover {
+    background-color: var(--button-color);
+}
+
 /*For pagination ui*/
 
 .pagination {

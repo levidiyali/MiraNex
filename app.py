@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+from flask_wtf import CSRFProtect
 
 load_dotenv()
 
@@ -15,6 +17,7 @@ password = os.getenv("MYSQL_PASSWORD")
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:{password}@localhost/miranex'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "fallback-secret-key")
+csrf = CSRFProtect(app)
 
 login_manager = LoginManager(app)
 
@@ -84,6 +87,18 @@ class Watched(db.Model):
 
     __table_args__ = (db.UniqueConstraint('user_id', 'anime_id'),)
 
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'))
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=None)
+
+    user = db.relationship('User')
+
 
 TYPE_GENRE_MAP = {
     'Happy' : ['Comedy', 'Slice of Life'],
@@ -98,8 +113,8 @@ TYPE_GENRE_MAP = {
 }
 
 TIME_BUCKETS = {
-    'Quick Watch': (1, 1),
-    'Weekend': (2, 13),
+    'Quick Watch': (1, 3),
+    'Weekend': (4, 13),
     'Week': (14, 26),
     'Month': (27, 50),
     'Long Haul': (51, None)
@@ -323,6 +338,7 @@ def delete_account():
 
     Wishlist.query.filter_by(user_id=user_id).delete()
     Watched.query.filter_by(user_id=user_id).delete()
+    Comment.query.filter_by(user_id=user_id).delete()
 
     user = User.query.get(user_id)
     logout_user()
@@ -335,9 +351,21 @@ def delete_account():
 def page_not_found(e):
     return render_template('404.html')
 
-@app.route('/anime/<int:id>')
+@app.route('/anime/<int:id>', methods=['GET', 'POST'])
 def anime_detail(id):
     anime = Anime.query.get_or_404(id)
+
+    if request.method == 'POST':
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
+
+        content = request.form.get('content', '').strip()
+        if content:
+            new_comment = Comment(user_id=current_user.user_id, anime_id=id, content=content)
+            db.session.add(new_comment)
+            db.session.commit()
+
+        return redirect(url_for('anime_detail', id=id))
 
     in_watchlist = False
     in_watched = False
@@ -372,12 +400,19 @@ def anime_detail(id):
 
     recommended = [c for c, _ in scored[:6]]
 
+    comment_limit = request.args.get('comments', 5, type=int)
+    comments = Comment.query.filter_by(anime_id=id).order_by(Comment.created_at.desc()).limit(comment_limit).all()
+    total_comments = Comment.query.filter_by(anime_id=id).count()
+
     return render_template(
         'anime_detail.html',
         anime=anime,
         in_watchlist=in_watchlist,
         in_watched=in_watched,
-        recommended=recommended
+        recommended=recommended,
+        comments=comments,
+        total_comments=total_comments,
+        comment_limit=comment_limit
     )
 
 @app.route('/anime/<int:id>/toggle-list', methods=['POST'])
@@ -405,6 +440,55 @@ def toggle_list(id):
 
     db.session.commit()
     return redirect(url_for('anime_detail', id=id))
+
+@app.route('/comment/<int:comment_id>/edit', methods=['POST'])
+@login_required
+def edit_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+
+    if comment.user_id != current_user.user_id:
+        return redirect(url_for('anime_detail', id=comment.anime_id))
+
+    new_content = request.form.get('content', '').strip()
+    if new_content and new_content != comment.content:
+        comment.content = new_content
+        comment.updated_at = datetime.utcnow()
+        db.session.commit()
+
+    return redirect(url_for('anime_detail', id=comment.anime_id))
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+
+    if comment.user_id != current_user.user_id:
+        return redirect(url_for('anime_detail', id=comment.anime_id))
+
+    anime_id = comment.anime_id
+    db.session.delete(comment)
+    db.session.commit()
+
+    return redirect(url_for('anime_detail', id=anime_id))
+
+@app.route('/random')
+def random_anime():
+    query = apply_filters(Anime.query)
+
+    if request.args.get('beginner'):
+        query = (
+            query
+            .filter(Anime.episodes <= BEGINNER_MAX_EPISODES)
+            .filter(db.or_(*[Anime.genres.contains(g) for g in BEGINNER_GENRES]))
+            .filter(db.and_(*[~Anime.genres.contains(g) for g in BEGINNER_EXCLUDE_GENRES]))
+        )
+
+    anime = query.order_by(db.func.rand()).first()
+
+    if anime is None:
+        return redirect(url_for('browse', **request.args))
+
+    return redirect(url_for('anime_detail', id=anime.id))
 
 
 @app.route('/watchlist')

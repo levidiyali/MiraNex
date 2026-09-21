@@ -15,6 +15,8 @@
     <main>
         <div class="auth-container">
             <form method="POST" action="{{ url_for('signup') }}" class="auth-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
                 <h2>Create an account</h2>
 
                 <label>Username</label>
