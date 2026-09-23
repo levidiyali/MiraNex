@@ -46,7 +46,7 @@
     background: var(--nav-color);
     border-radius: 6px;
     padding: 10px;
-    min-width: 126px;
+    min-width: 130px;
     max-height: 355px;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -58,6 +58,7 @@
     display: block;
     padding: 4px 0;
     white-space: nowrap;
+    user-select: none;
 }
 
 input[type=text] {
@@ -87,6 +88,91 @@ button[type=submit] {
 
 button[type=submit]:hover {
     transform: scale(1.02);
+}
+
+/*Mood, Format, Time states*/
+
+.filter label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.toggle-field input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-box {
+    width: 12px;
+    height: 12px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    color: white;
+}
+
+.toggle-field input[type="checkbox"]:checked ~ .toggle-box {
+    background-color: rgb(42, 184, 42);
+    border-color: rgb(52, 221, 52);
+}
+
+.toggle-field input[type="checkbox"]:checked ~ .toggle-box::before {
+    content: "✓";
+}
+
+
+/*Genre states*/
+
+.genre-options label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.genre-box {
+    width: 12px;
+    height: 12px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.genre-toggle[data-state="include"] .genre-box {
+    background-color: rgb(42, 184, 42);
+    border-color: rgb(52, 221, 52);
+    color: white;
+}
+
+.genre-toggle[data-state="include"] .genre-box::before {
+    content: "✓";
+}
+
+.genre-toggle[data-state="exclude"] .genre-box {
+    background-color: #db2929;
+    border-color: #db2929;
+    color: white;
+}
+
+.genre-toggle[data-state="exclude"] .genre-box::before {
+    content: "−";
 }
 
 @media (max-width: 1024px) {

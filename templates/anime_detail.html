@@ -35,8 +35,8 @@
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <select name="list_type" id="list-type-select">
-                                    <option value="watchlist">Watchlist</option>
-                                    <option value="watched">Watched</option>
+                                    <option value="watchlist" {% if in_watchlist %}selected{% endif %}>Watchlist</option>
+                                    <option value="watched" {% if in_watched %}selected{% endif %}>Watched</option>
                                 </select>
 
                                 <button type="submit" id="list-action-btn">Add</button>
@@ -143,12 +143,15 @@
 
                         {% for comment in comments %}
 
-                            <div class="comment">
+                            <div class="comment {% if current_user.is_authenticated and comment.user_id == current_user.user_id %}pinned-comment{% endif %}">
+
                                 <div class="comment-header">
+
                                     <div class="profilee">
                                         <label class="profile-icon">👤</label>
                                         <span class="comment-user">{{ comment.user.username }}</span>
                                     </div>
+
                                     <span class="comment-date">
                                         {{ comment.created_at.strftime('%b %d, %Y') }}
                                         {% if comment.updated_at %}<span class="edited-tag">(edited)</span>{% endif %}
@@ -160,6 +163,7 @@
                                 {% if current_user.is_authenticated and current_user.user_id == comment.user_id %}
 
                                     <form method="POST" action="{{ url_for('edit_comment', comment_id = comment.id) }}" class="edit-comment-form" id="edit-form-{{ comment.id }}" style="display: none;">
+                                        
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                         <textarea name="content" maxlength="1000">{{ comment.content }}</textarea>
@@ -168,6 +172,7 @@
                                             <button type="button" class="edit-cancel-btn" data-comment-id="{{ comment.id }}">Cancel</button>
                                             <button type="submit" id="#save-btn">Save</button>
                                         </div>
+                                        
                                     </form>
 
                                     <div class="comment-owner-actions" id="comment-actions-{{ comment.id }}">

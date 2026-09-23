@@ -107,6 +107,7 @@ body{
 }
 
 .side-details .item label{
+    color: whitesmoke;
     font-weight: bold;
 }
 
@@ -256,10 +257,14 @@ body{
     background-color: var(--button-color);
     color: whitesmoke;
     border: none;
-    padding: 8px 15px;
+    padding: 9px 15px;
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
+}
+
+#post-comment-btn:hover {
+    background-color: rgb(23, 94, 228);
 }
 
 .comment {
@@ -286,6 +291,10 @@ body{
     background-color: rgb(164, 164, 255);
     padding: 5px;
     border-radius: 100px;
+}
+
+.pinned-comment {
+    border-left: 3px solid var(--button-color);
 }
 
 .comment-user {
@@ -368,12 +377,21 @@ body{
     font-size: 12px;
     cursor: pointer;
     padding: 0;
+    margin-top: 2px;
+}
+
+.edit-comment-btn:hover{
+    text-decoration: underline;
 }
 
 .edit-comment-actions button[type=submit] {
     background-color: var(--button-color);
     color: whitesmoke;
     font-weight: bold;
+}
+
+.edit-comment-actions button[type=submit]:hover {
+    background-color: rgb(23, 94, 228);
 }
 
 .edit-comment-actions button[type=button] {
@@ -417,9 +435,17 @@ body{
     color: whitesmoke;
 }
 
+#comment-delete-cancel:hover {
+    background-color: #303c4b;
+}
+
 #comment-delete-confirm {
     background-color: #db2929;
     color: whitesmoke;
+}
+
+#comment-delete-confirm:hover {
+    background-color: #c21818;
 }
 
 @media (max-width: 1024px) {
@@ -512,6 +538,7 @@ body{
         max-width: 100%;
         background-color: #19283a;
         padding: 20px;
+        text-align: left;
     }
     
 }

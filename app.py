@@ -155,6 +155,11 @@ def apply_filters(query):
         for g in genres:
             query = query.filter(Anime.genres.contains(g))
 
+    exclude_genres = request.args.getlist('exclude_genre')
+    if exclude_genres:
+        for g in exclude_genres:
+            query = query.filter(~Anime.genres.contains(g))
+
     if times:
         time_conditions = []
         for t in times:
@@ -172,6 +177,7 @@ def apply_filters(query):
 
     return query
 
+
 def normalized_match_ids(search):
     search_normalized = re.sub(r'[^a-z0-9]', '', search.lower())
     if not search_normalized:
@@ -186,6 +192,7 @@ def normalized_match_ids(search):
             matches.append(anime_id)
 
     return matches
+
 
 @app.route('/')
 def home():
@@ -216,6 +223,7 @@ def home():
         beginner_friendly=beginner_friendly,
         quick_watch=quick_watch
     )
+
 
 @app.route('/browse')
 def browse():
@@ -258,6 +266,7 @@ def browse():
         current_sort=sort
     )
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     errors = {}
@@ -286,8 +295,8 @@ def signup():
 
         if not password:
             errors['password'] = 'Password is required.'
-        elif len(password) < 6:
-            errors['password'] = 'Password must be at least 6 characters.'
+        elif len(password) < 8:
+            errors['password'] = 'Password must be at least 8 characters.'
         elif not re.search(r'[A-Za-z]', password) or not re.search(r'[0-9]', password):
             errors['password'] = 'Password must contain both letters and numbers.'
 
@@ -306,6 +315,7 @@ def signup():
             return redirect(url_for('home'))
 
     return render_template('signup.html', errors=errors, username=username, email=email)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -331,6 +341,7 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
 @app.route('/delete-account', methods=['POST'])
 @login_required
 def delete_account():
@@ -347,9 +358,11 @@ def delete_account():
 
     return redirect(url_for('home'))
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
+
 
 @app.route('/anime/<int:id>', methods=['GET', 'POST'])
 def anime_detail(id):
@@ -401,7 +414,28 @@ def anime_detail(id):
     recommended = [c for c, _ in scored[:6]]
 
     comment_limit = request.args.get('comments', 5, type=int)
-    comments = Comment.query.filter_by(anime_id=id).order_by(Comment.created_at.desc()).limit(comment_limit).all()
+
+    pinned_comments = []
+    if current_user.is_authenticated:
+        pinned_comments = (
+        Comment.query
+        .filter_by(anime_id=id, user_id=current_user.user_id)
+        .order_by(Comment.created_at.desc())
+        .all()
+    )
+
+    pinned_ids = [c.id for c in pinned_comments]
+
+    other_comments = (
+        Comment.query
+        .filter_by(anime_id=id)
+        .filter(~Comment.id.in_(pinned_ids))
+        .order_by(Comment.created_at.desc())
+        .limit(comment_limit)
+        .all()
+    )
+
+    comments = pinned_comments + other_comments
     total_comments = Comment.query.filter_by(anime_id=id).count()
 
     return render_template(
@@ -414,6 +448,7 @@ def anime_detail(id):
         total_comments=total_comments,
         comment_limit=comment_limit
     )
+
 
 @app.route('/anime/<int:id>/toggle-list', methods=['POST'])
 @login_required
@@ -441,6 +476,7 @@ def toggle_list(id):
     db.session.commit()
     return redirect(url_for('anime_detail', id=id))
 
+
 @app.route('/comment/<int:comment_id>/edit', methods=['POST'])
 @login_required
 def edit_comment(comment_id):
@@ -456,6 +492,7 @@ def edit_comment(comment_id):
         db.session.commit()
 
     return redirect(url_for('anime_detail', id=comment.anime_id))
+
 
 @app.route('/comment/<int:comment_id>/delete', methods=['POST'])
 @login_required
@@ -514,4 +551,4 @@ def about():
 
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug = True, threaded=True)

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/filters.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/filters.css') }}">
 
 <div class="filter-overlay-mobile" id="filter-overlay-mobile"></div>
 
@@ -7,8 +7,13 @@
 
         <div class="field" id="name-field">
             <p>Name</p>
-            <input type="text" name="search" placeholder="Search" value="{{ request.args.get('search', '') }}"
-                autocomplete="off">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search"
+                value="{{ request.args.get('search', '') }}"
+                autocomplete="off"
+            >
         </div>
 
         <div class="field">
@@ -16,13 +21,12 @@
             <details class="filter-dropdown" name="filters">
                 <summary>Select</summary>
                 <div class="filter-options">
-
                     {% for t in ['Happy', 'Funny', 'Emotional', 'Exciting', 'Relaxing', 'Scary', 'Romantic', 'Mysterious', 'Competitive'] %}
-                    <label>
-                        <input type="checkbox" name="type" value="{{ t }}" {% if t in request.args.getlist('type')
-                            %}checked{% endif %}>
-                        {{ t }}
-                    </label>
+                        <label class="toggle-field">
+                            <input type="checkbox" name="type" value="{{ t }}" {% if t in request.args.getlist('type') %}checked{% endif %}>
+                            <span class="toggle-box"></span>
+                            <span>{{ t }}</span>
+                        </label>
                     {% endfor %}
                 </div>
             </details>
@@ -32,15 +36,17 @@
             <p>Genre</p>
             <details class="filter-dropdown" name="filters">
                 <summary>Select</summary>
-                <div class="filter-options">
-                    {% for g in ['Action', 'Adventure', 'Comedy', 'Romance', 'Fantasy', 'Isekai', 'Drama', 'Horror',
-                    'Slice of Life', 'School', 'Iyashikei', 'Mecha',
-                    'Sci-Fi', 'Mystery', 'Sports', 'Supernatural', 'Thriller', 'Psychological', 'Martial Arts'] %}
-                    <label>
-                        <input type="checkbox" name="genre" value="{{ g }}" {% if g in request.args.getlist('genre')
-                            %}checked{% endif %}>
-                        {{ g }}
-                    </label>
+                <div class="filter-options genre-options">
+                    {% for g in ['Action', 'Adventure', 'Comedy', 'Romance', 'Fantasy', 'Isekai', 'Drama', 'Horror', 'Slice of Life', 'School', 'Iyashikei', 'Sci-Fi', 'Mystery', 'Sports', 'Supernatural', 'Thriller', 'Psychological', 'Martial Arts'] %}
+                        <label
+                            class="genre-toggle"
+                            data-state="{% if g in request.args.getlist('genre') %}include{% elif g in request.args.getlist('exclude_genre') %}exclude{% else %}neutral{% endif %}"
+                        >
+                            <span class="genre-box"></span>
+                            <span>{{ g }}</span>
+                            <input type="hidden" name="genre" value="{{ g }}" class="genre-include-input" {% if g not in request.args.getlist('genre') %}disabled{% endif %}>
+                            <input type="hidden" name="exclude_genre" value="{{ g }}" class="genre-exclude-input" {% if g not in request.args.getlist('exclude_genre') %}disabled{% endif %}>
+                        </label>
                     {% endfor %}
                 </div>
             </details>
@@ -52,11 +58,11 @@
                 <summary>Select</summary>
                 <div class="filter-options">
                     {% for f in ['TV', 'Movie', 'ONA'] %}
-                    <label>
-                        <input type="checkbox" name="format" value="{{ f }}" {% if f in request.args.getlist('format')
-                            %}checked{% endif %}>
-                        {{ f }}
-                    </label>
+                        <label class="toggle-field">
+                            <input type="checkbox" name="format" value="{{ f }}" {% if f in request.args.getlist('format') %}checked{% endif %}>
+                            <span class="toggle-box"></span>
+                            <span>{{ f }}</span>
+                        </label>
                     {% endfor %}
                 </div>
             </details>
@@ -68,11 +74,11 @@
                 <summary>Select</summary>
                 <div class="filter-options">
                     {% for label in ['Quick Watch', 'Weekend', 'Week', 'Month', 'Long Haul'] %}
-                    <label>
-                        <input type="checkbox" name="time" value="{{ label }}" {% if label in
-                            request.args.getlist('time') %}checked{% endif %}>
-                        {{ label }}
-                    </label>
+                        <label class="toggle-field">
+                            <input type="checkbox" name="time" value="{{ label }}" {% if label in request.args.getlist('time') %}checked{% endif %}>
+                            <span class="toggle-box"></span>
+                            <span>{{ label }}</span>
+                        </label>
                     {% endfor %}
                 </div>
             </details>
@@ -88,60 +94,93 @@
 
 <script>
     (function () {
-        const dropdowns = document.querySelectorAll('.filter-dropdown');
-        const mobileOverlay = document.getElementById('filter-overlay-mobile');
+        const dropdowns = document.querySelectorAll(".filter-dropdown");
+        const mobileOverlay = document.getElementById("filter-overlay-mobile");
         const isPhone = () => window.innerWidth <= 480;
         const isTablet = () => window.innerWidth > 480 && window.innerWidth <= 1024;
 
         dropdowns.forEach(function (dropdown) {
-            const options = dropdown.querySelector('.filter-options');
-            const summary = dropdown.querySelector('summary');
-            const checkboxes = dropdown.querySelectorAll('input[type=checkbox]');
+            const options = dropdown.querySelector(".filter-options");
+            const summary = dropdown.querySelector("summary");
+            const checkboxes = dropdown.querySelectorAll("input[type=checkbox]");
+            const genreToggles = dropdown.querySelectorAll(".genre-toggle");
 
             function updateSummary() {
-                const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-                summary.textContent = checkedCount > 0 ? checkedCount + ' selected' : 'Select';
+                const checkedCount = Array.from(checkboxes).filter(
+                    (cb) => cb.checked,
+                ).length;
+                const activeGenreCount = Array.from(genreToggles).filter(
+                    (t) => t.dataset.state !== "neutral",
+                ).length;
+                const total = checkedCount + activeGenreCount;
+                summary.textContent = total > 0 ? total + " selected" : "Select";
             }
 
             checkboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', updateSummary);
+                checkbox.addEventListener("change", updateSummary);
+            });
+
+            genreToggles.forEach(function (toggle) {
+                const includeInput = toggle.querySelector(".genre-include-input");
+                const excludeInput = toggle.querySelector(".genre-exclude-input");
+
+                toggle.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const state = toggle.dataset.state;
+
+                    if (state === "neutral") {
+                        toggle.dataset.state = "include";
+                        includeInput.disabled = false;
+                        excludeInput.disabled = true;
+                    } else if (state === "include") {
+                        toggle.dataset.state = "exclude";
+                        includeInput.disabled = true;
+                        excludeInput.disabled = false;
+                    } else {
+                        toggle.dataset.state = "neutral";
+                        includeInput.disabled = true;
+                        excludeInput.disabled = true;
+                    }
+
+                    updateSummary();
+                });
             });
 
             updateSummary();
 
-            dropdown.addEventListener('toggle', function () {
+            dropdown.addEventListener("toggle", function () {
                 if (dropdown.open) {
                     if (isPhone()) {
                         if (mobileOverlay) {
-                            mobileOverlay.classList.add('open');
+                            mobileOverlay.classList.add("open");
                         }
                     } else if (isTablet()) {
                         const rect = summary.getBoundingClientRect();
-                        options.style.position = 'fixed';
-                        options.style.top = (rect.bottom + 4) + 'px';
-                        options.style.left = rect.left + 'px';
+                        options.style.position = "fixed";
+                        options.style.top = rect.bottom + 4 + "px";
+                        options.style.left = rect.left + "px";
                     }
-
                 } else if (isPhone() && mobileOverlay) {
-                    mobileOverlay.classList.remove('open');
+                    mobileOverlay.classList.remove("open");
                 }
             });
         });
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener("click", function (event) {
             dropdowns.forEach(function (dropdown) {
                 if (dropdown.open && !dropdown.contains(event.target)) {
-                    dropdown.removeAttribute('open');
+                    dropdown.removeAttribute("open");
                 }
             });
         });
 
         if (mobileOverlay) {
-            mobileOverlay.addEventListener('click', function () {
+            mobileOverlay.addEventListener("click", function () {
                 dropdowns.forEach(function (dropdown) {
-                    dropdown.removeAttribute('open');
+                    dropdown.removeAttribute("open");
                 });
-                mobileOverlay.classList.remove('open');
+                mobileOverlay.classList.remove("open");
             });
         }
     })();

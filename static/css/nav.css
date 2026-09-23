@@ -247,9 +247,17 @@ a {
     color: whitesmoke;
 }
 
+#confirm-cancel:hover {
+    background-color: #303c4b;
+}
+
 #confirm-delete {
     background-color: #db2929;
     color: whitesmoke;
+}
+
+#confirm-delete:hover {
+    background-color: #c21818;
 }
 
 #logout-confirm-cancel {
