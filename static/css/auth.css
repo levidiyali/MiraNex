@@ -78,3 +78,31 @@ body {
 main {
     flex: 1;
 }
+
+
+/*For password show/hide toggle*/
+
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.password-field .toggle-password {
+    position: absolute;
+    right: 9px;
+    bottom: 10px;
+    background: transparent;
+    color: rgb(180, 180, 180);
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: normal;
+    padding: 0;
+}

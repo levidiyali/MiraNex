@@ -1,48 +1,69 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
-    <title>Sign Up - MiraNex</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
-</head>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="{{ url_for('static', filename = 'images/miranex.png') }}">
+        <title>Sign Up - MiraNex</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/auth.css') }}">
+    </head>
 
-<body>
-    {% include 'nav.html' %}
+    <body>
+        {% include 'nav.html' %}
 
-    <main>
-        <div class="auth-container">
-            <form method="POST" action="{{ url_for('signup') }}" class="auth-form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <main>
+            <div class="auth-container">
+                <form method="POST" action="{{ url_for('signup') }}" class="auth-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
-                <h2>Create an account</h2>
+                    <h2>Create an account</h2>
 
-                <label>Username</label>
-                <input type="text" name="username" value="{{ username }}" maxlength="20" autocomplete="off">
-                {% if errors.username %}<p class="error">{{ errors.username }}</p>{% endif %}
+                    <label>Username</label>
+                    <input type="text" name="username" value="{{ username }}" maxlength="20" autocomplete="off">
+                    {% if errors.username %}<p class="error">{{ errors.username }}</p>{% endif %}
 
-                <label>Email</label>
-                <input type="email" name="email" value="{{ email }}" maxlength="30">
-                {% if errors.email %}<p class="error">{{ errors.email }}</p>{% endif %}
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ email }}" maxlength="30">
+                    {% if errors.email %}<p class="error">{{ errors.email }}</p>{% endif %}
 
-                <label>Password</label>
-                <input type="password" name="password">
-                {% if errors.password %}<p class="error">{{ errors.password }}</p>{% endif %}
+                    <label>Password</label>
+                    <div class="password-field">
+                        <input type="password" name="password" id="password-input">
+                        <button type="button" class="toggle-password" data-target="password-input">Show</button>
+                    </div>
+                    {% if errors.password %}<p class="error">{{ errors.password }}</p>{% endif %}
 
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password">
-                {% if errors.confirm_password %}<p class="error">{{ errors.confirm_password }}</p>{% endif %}
+                    <label>Confirm Password</label>
+                    <div class="password-field">
+                        <input type="password" name="confirm_password" id="confirm-password-input">
+                        <button type="button" class="toggle-password" data-target="confirm-password-input">Show</button>
+                    </div>
+                    {% if errors.confirm_password %}<p class="error">{{ errors.confirm_password }}</p>{% endif %}
 
-                <button type="submit">Sign Up</button>
+                    <button type="submit">Sign Up</button>
 
-                <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
-            </form>
-        </div>
-    </main>
+                    <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+                </form>
+            </div>
+        </main>
 
-    {% include 'footer.html' %}
-</body>
+        <script>
+            document.querySelectorAll(".toggle-password").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    const input = document.getElementById(btn.dataset.target);
+                    if (input.type === "password") {
+                        input.type = "text";
+                        btn.textContent = "Hide";
+                    } else {
+                        input.type = "password";
+                        btn.textContent = "Show";
+                    }
+                });
+            });
+        </script>
+
+        {% include 'footer.html' %}
+    </body>
 
 </html>

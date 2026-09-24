@@ -1,47 +1,65 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='images/miranex.png') }}">
-    <title>Login - MiraNex</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
-</head>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="{{ url_for('static', filename = 'images/miranex.png') }}">
+        <title>Login - MiraNex</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/auth.css') }}">
+    </head>
 
-<body>
-    {% include 'nav.html' %}
+    <body>
+        {% include 'nav.html' %}
 
-    <main>
-        <div class="auth-container">
-            <form method="POST" action="{{ url_for('login') }}" class="auth-form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <main>
+            <div class="auth-container">
+                <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
-                <h2>Log in</h2>
+                    <h2>Log in</h2>
 
-                <label>Email</label>
-                <input type="email" name="email" required>
+                    <label>Email</label>
+                    <input type="email" name="email" required>
 
-                <label>Password</label>
-                <input type="password" name="password" required>
+                    <label>Password</label>
+                    <div class="password-field">
+                        <input type="password" name="password" id="login-password-input" required>
+                        <button type="button" class="toggle-password" data-target="login-password-input">Show</button>
+                    </div>
 
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                {% for message in messages %}
-                <p class="error">{{ message }}</p>
-                {% endfor %}
-                {% endif %}
-                {% endwith %}
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p class="error">{{ message }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
 
-                <button type="submit">Log In</button>
+                    <button type="submit">Log In</button>
 
-                <p class="switch">Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
-            </form>
-        </div>
+                    <p class="switch">Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+                </form>
+            </div>
 
-    </main>
+        </main>
 
-    {% include 'footer.html' %}
-</body>
+        <script>
+            document.querySelectorAll(".toggle-password").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    const input = document.getElementById(btn.dataset.target);
+                    if (input.type === "password") {
+                        input.type = "text";
+                        btn.textContent = "Hide";
+                    } else {
+                        input.type = "password";
+                        btn.textContent = "Show";
+                    }
+                });
+            });
+        </script>
+
+        {% include 'footer.html' %}
+    </body>
 
 </html>

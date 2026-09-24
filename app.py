@@ -68,8 +68,8 @@ class User(db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class Wishlist(db.Model):
-    __tablename__ = 'wishlist'
+class Watchlist(db.Model):
+    __tablename__ = 'watchlist'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
@@ -113,8 +113,8 @@ TYPE_GENRE_MAP = {
 }
 
 TIME_BUCKETS = {
-    'Quick Watch': (1, 3),
-    'Weekend': (4, 13),
+    'Quick Watch': (1, 4),
+    'Weekend': (5, 13),
     'Week': (14, 26),
     'Month': (27, 50),
     'Long Haul': (51, None)
@@ -347,7 +347,7 @@ def logout():
 def delete_account():
     user_id = current_user.user_id
 
-    Wishlist.query.filter_by(user_id=user_id).delete()
+    Watchlist.query.filter_by(user_id=user_id).delete()
     Watched.query.filter_by(user_id=user_id).delete()
     Comment.query.filter_by(user_id=user_id).delete()
 
@@ -383,7 +383,7 @@ def anime_detail(id):
     in_watchlist = False
     in_watched = False
     if current_user.is_authenticated:
-        in_watchlist = Wishlist.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
+        in_watchlist = Watchlist.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
         in_watched = Watched.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
 
     anime_genres = set(g.strip() for g in anime.genres.split(',') if g.strip())
@@ -436,6 +436,7 @@ def anime_detail(id):
     )
 
     comments = pinned_comments + other_comments
+    shown_count = len(comments)
     total_comments = Comment.query.filter_by(anime_id=id).count()
 
     return render_template(
@@ -446,6 +447,7 @@ def anime_detail(id):
         recommended=recommended,
         comments=comments,
         total_comments=total_comments,
+        shown_count=shown_count,
         comment_limit=comment_limit
     )
 
@@ -456,8 +458,8 @@ def toggle_list(id):
     list_type = request.form.get('list_type')
     Anime.query.get_or_404(id)
 
-    model = Wishlist if list_type == 'watchlist' else Watched if list_type == 'watched' else None
-    other_model = Watched if list_type == 'watchlist' else Wishlist if list_type == 'watched' else None
+    model = Watchlist if list_type == 'watchlist' else Watched if list_type == 'watched' else None
+    other_model = Watched if list_type == 'watchlist' else Watchlist if list_type == 'watched' else None
 
     if model is None:
         return redirect(url_for('anime_detail', id=id))
@@ -531,7 +533,7 @@ def random_anime():
 @app.route('/watchlist')
 @login_required
 def watchlist():
-    entries = Wishlist.query.filter_by(user_id=current_user.user_id).all()
+    entries = Watchlist.query.filter_by(user_id=current_user.user_id).all()
     anime_ids = [e.anime_id for e in entries]
     anime_list = Anime.query.filter(Anime.id.in_(anime_ids)).all() if anime_ids else []
     return render_template('watchlist.html', anime_list=anime_list)
@@ -551,4 +553,4 @@ def about():
 
 
 if __name__ == "__main__":
-    app.run(debug = True, threaded=True)
+    app.run(debug=True, threaded=True)

@@ -120,7 +120,11 @@
                 </div>
 
                 <div class="comments-section">
-                    <h2>Comments</h2>
+                    
+                    <div class="comment-top">
+                        <label for="commenttt">{{ total_comments }}</label>
+                        <h2>Comments</h2>
+                    </div>
 
                     {% if current_user.is_authenticated %}
                         <form method="POST" action="{{ url_for('anime_detail', id = anime.id) }}" class="comment-form">
@@ -193,7 +197,7 @@
                         {% endfor %}
                     </div>
 
-                    {% if total_comments > comment_limit %}
+                    {% if total_comments > shown_count %}
                         <div class="load-more-comments-container">
                             <a href="{{ url_for('anime_detail', id = anime.id) }}?comments={{ comment_limit + 9 }}#comments">Load More Comments</a>
                         </div>

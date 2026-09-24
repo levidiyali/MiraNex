@@ -147,6 +147,23 @@
                 });
             });
 
+            const timeCheckboxes = dropdown.querySelectorAll('input[name="time"]');
+
+            if (timeCheckboxes.length > 0) {
+                timeCheckboxes.forEach(function (checkbox) {
+                    checkbox.addEventListener("change", function () {
+                        if (checkbox.checked) {
+                            timeCheckboxes.forEach(function (other) {
+                                if (other !== checkbox) {
+                                    other.checked = false;
+                                }
+                            });
+                            updateSummary();
+                        }
+                    });
+                });
+            }
+
             updateSummary();
 
             dropdown.addEventListener("toggle", function () {
