@@ -49,7 +49,7 @@
 .upper-section .right-side .links{
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .right-side .links a{
@@ -59,7 +59,13 @@
 .explore-section{
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+}
+
+.contact {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .right-side h2{
@@ -75,10 +81,19 @@
 }
 
 .lower-section {
+    display: flex;
+    justify-content: space-between;
     text-align: center;
     font-size: 14px;
     margin-top: 10px;
     margin-bottom: 5px;
+    padding-left: 50px;
+    padding-right: 90px;
+    text-wrap: nowrap;
+}
+
+.lower-section a:hover {
+    text-decoration: underline;
 }
 
 @media(max-width: 1024px) {
@@ -111,6 +126,11 @@
 
     .right-side {
         margin-bottom: 20px;
+    }
+
+    .lower-section {
+        padding: 0;
+        gap: 30px;
     }
 
     .lower-section label{
