@@ -8,6 +8,10 @@
     <div class="text-list">
         <a href="{{ url_for('watchlist') }}">Watchlist</a>
         <a href="{{ url_for('watched') }}">Watched</a>
+
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+        {% endif %}
     </div>
 
     <div class="sign">
@@ -54,6 +58,10 @@
 <div class="mobile-menu" id="mobile-menu">
     <a href="{{ url_for('watchlist') }}">Watchlist</a>
     <a href="{{ url_for('watched') }}">Watched</a>
+
+    {% if current_user.is_authenticated and current_user.is_admin %}
+        <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+    {% endif %}
 
     {% if current_user.is_authenticated %}
 

@@ -7,8 +7,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_wtf import CSRFProtect
+from functools import wraps
+from flask import abort
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated
 
 load_dotenv()
+
+
+def get_youtube_embed_url(url):
+    if not url:
+        return None
+
+    match = re.search(r'(?:v=|youtu\.be/|embed/)([a-zA-Z0-9_-]{11})', url)
+    if not match:
+        return None
+
+    return f'https://www.youtube.com/embed/{match.group(1)}'
+
 
 app = Flask(__name__)
 
@@ -45,6 +68,7 @@ class Anime(db.Model):
     episode_length = db.Column(db.String(20))
     rating = db.Column(db.Float)
     release_year = db.Column(db.Integer)
+    trailer_url = db.Column(db.String(255))
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -53,6 +77,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     def set_password(self, raw_password):
         self.password = generate_password_hash(raw_password)
@@ -98,6 +123,17 @@ class Comment(db.Model):
     updated_at = db.Column(db.DateTime, default=None)
 
     user = db.relationship('User')
+    anime = db.relationship('Anime')
+
+class Rating(db.Model):
+    __tablename__ = 'ratings'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'))
+    score = db.Column(db.Integer, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'anime_id'),)
 
 
 TYPE_GENRE_MAP = {
@@ -316,6 +352,151 @@ def signup():
 
     return render_template('signup.html', errors=errors, username=username, email=email)
 
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_dashboard():
+    total_users = User.query.count()
+    total_anime = Anime.query.count()
+    total_comments = Comment.query.count()
+    total_watchlist = Watchlist.query.count()
+    total_watched = Watched.query.count()
+
+    anime_search = request.args.get('anime_search', '').strip()
+
+    if anime_search or request.args.get('tab') == 'anime':
+        active_tab = 'anime'
+    else:
+        active_tab = 'moderation'
+
+    comment_search = request.args.get('comment_search', '').strip()
+
+    comment_query = Comment.query
+    if comment_search:
+        comment_query = comment_query.join(User).filter(
+        db.or_(
+            Comment.content.contains(comment_search),
+            User.username.contains(comment_search)
+        )
+    )
+
+    comment_query = comment_query.order_by(Comment.created_at.desc())
+    comment_page = request.args.get('comment_page', 1, type=int)
+    comment_pagination = comment_query.paginate(page=comment_page, per_page=10, error_out=False)
+
+    comment_filter_args = request.args.to_dict(flat=False)
+    comment_filter_args.pop('anime_page', None)
+    comment_filter_args.pop('comment_page', None)
+    comment_filter_args['tab'] = ['moderation']
+
+    anime_query = Anime.query
+    if anime_search:
+        matching_ids = normalized_match_ids(anime_search)
+        if matching_ids:
+            anime_query = anime_query.filter(
+                db.or_(Anime.name.contains(anime_search), Anime.id.in_(matching_ids))
+            )
+        else:
+            anime_query = anime_query.filter(Anime.name.contains(anime_search))
+
+    anime_query = anime_query.order_by(Anime.id.desc())
+    anime_page = request.args.get('anime_page', 1, type=int)
+    anime_pagination = anime_query.paginate(page=anime_page, per_page=10, error_out=False)
+
+    anime_filter_args = request.args.to_dict(flat=False)
+    anime_filter_args.pop('anime_page', None)
+    anime_filter_args.pop('comment_page', None)
+    anime_filter_args['tab'] = ['anime']
+
+
+    return render_template(
+        'admin.html',
+        total_users=total_users,
+        total_anime=total_anime,
+        total_comments=total_comments,
+        total_watchlist=total_watchlist,
+        total_watched=total_watched,
+        comments=comment_pagination.items,
+        comment_pagination=comment_pagination,
+        comment_filter_args=comment_filter_args,
+        anime_list=anime_pagination.items,
+        anime_pagination=anime_pagination,
+        anime_filter_args=anime_filter_args,
+        anime_search=anime_search,
+        comment_search=comment_search,
+        active_tab=active_tab
+    )
+
+
+@app.route('/admin/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(url_for('admin_dashboard', tab='moderation'))
+
+
+@app.route('/admin/anime/add', methods=['POST'])
+@login_required
+@admin_required
+def admin_add_anime():
+    new_anime = Anime(
+        name=request.form.get('name', '').strip(),
+        genres=request.form.get('genres', '').strip(),
+        type=request.form.get('type', '').strip(),
+        format=request.form.get('format', '').strip(),
+        image=request.form.get('image', '').strip(),
+        detail_image=request.form.get('detail_image', '').strip(),
+        description=request.form.get('description', '').strip(),
+        seasons=request.form.get('seasons', type=int),
+        episodes=request.form.get('episodes', type=int),
+        episode_length=request.form.get('episode_length', '').strip(),
+        rating=request.form.get('rating', type=float),
+        release_year=request.form.get('release_year', type=int),
+        trailer_url=request.form.get('trailer_url', '').strip()
+    )
+    db.session.add(new_anime)
+    db.session.commit()
+    return redirect(url_for('admin_dashboard', tab='anime'))
+
+
+@app.route('/admin/anime/<int:anime_id>/edit', methods=['POST'])
+@login_required
+@admin_required
+def admin_edit_anime(anime_id):
+    anime = Anime.query.get_or_404(anime_id)
+    anime.name = request.form.get('name', '').strip()
+    anime.genres = request.form.get('genres', '').strip()
+    anime.type = request.form.get('type', '').strip()
+    anime.format = request.form.get('format', '').strip()
+    anime.image = request.form.get('image', '').strip()
+    anime.detail_image = request.form.get('detail_image', '').strip()
+    anime.description = request.form.get('description', '').strip()
+    anime.seasons = request.form.get('seasons', type=int)
+    anime.episodes = request.form.get('episodes', type=int)
+    anime.episode_length = request.form.get('episode_length', '').strip()
+    anime.rating = request.form.get('rating', type=float)
+    anime.release_year = request.form.get('release_year', type=int)
+    anime.trailer_url = request.form.get('trailer_url', '').strip()
+    
+    db.session.commit()
+    return redirect(url_for('admin_dashboard', tab='anime'))
+
+
+
+@app.route('/admin/anime/<int:anime_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_anime(anime_id):
+    Watchlist.query.filter_by(anime_id=anime_id).delete()
+    Watched.query.filter_by(anime_id=anime_id).delete()
+    Comment.query.filter_by(anime_id=anime_id).delete()
+    Anime.query.filter_by(id=anime_id).delete()
+    db.session.commit()
+    return redirect(url_for('admin_dashboard', tab='anime'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -359,6 +540,11 @@ def delete_account():
     return redirect(url_for('home'))
 
 
+@app.errorhandler(403)
+def access_forbidden(e):
+    return render_template('403.html'), 403
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
@@ -367,6 +553,7 @@ def page_not_found(e):
 @app.route('/anime/<int:id>', methods=['GET', 'POST'])
 def anime_detail(id):
     anime = Anime.query.get_or_404(id)
+    trailer_embed_url = get_youtube_embed_url(anime.trailer_url)
 
     if request.method == 'POST':
         if not current_user.is_authenticated:
@@ -382,9 +569,16 @@ def anime_detail(id):
 
     in_watchlist = False
     in_watched = False
+    user_rating = None
     if current_user.is_authenticated:
         in_watchlist = Watchlist.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
         in_watched = Watched.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
+
+        existing_rating = Rating.query.filter_by(user_id=current_user.user_id, anime_id=id).first()
+        user_rating = existing_rating.score if existing_rating else None
+
+    rating_avg = db.session.query(db.func.avg(Rating.score)).filter_by(anime_id=id).scalar()
+    rating_count = Rating.query.filter_by(anime_id=id).count()
 
     anime_genres = set(g.strip() for g in anime.genres.split(',') if g.strip())
 
@@ -448,7 +642,11 @@ def anime_detail(id):
         comments=comments,
         total_comments=total_comments,
         shown_count=shown_count,
-        comment_limit=comment_limit
+        comment_limit=comment_limit,
+        user_rating=user_rating,
+        community_rating_avg=round(rating_avg, 1) if rating_avg else None,
+        rating_count=rating_count,
+        trailer_embed_url=trailer_embed_url
     )
 
 
@@ -465,6 +663,7 @@ def toggle_list(id):
         return redirect(url_for('anime_detail', id=id))
 
     existing = model.query.filter_by(user_id=current_user.user_id, anime_id=id).first()
+    newly_watched = False
 
     if existing:
         db.session.delete(existing)
@@ -474,8 +673,14 @@ def toggle_list(id):
             db.session.delete(other_existing)
 
         db.session.add(model(user_id=current_user.user_id, anime_id=id))
+        if list_type == 'watched':
+            newly_watched = True
 
     db.session.commit()
+
+    if newly_watched:
+        return redirect(url_for('anime_detail', id=id, just_watched=1))
+
     return redirect(url_for('anime_detail', id=id))
 
 
@@ -536,7 +741,11 @@ def watchlist():
     entries = Watchlist.query.filter_by(user_id=current_user.user_id).all()
     anime_ids = [e.anime_id for e in entries]
     anime_list = Anime.query.filter(Anime.id.in_(anime_ids)).all() if anime_ids else []
-    return render_template('watchlist.html', anime_list=anime_list)
+    watch_count = len(anime_list)
+    return render_template('watchlist.html',
+                            anime_list=anime_list,
+                            watch_count=watch_count
+                            )
 
 
 @app.route('/watched')
@@ -545,15 +754,44 @@ def watched():
     entries = Watched.query.filter_by(user_id=current_user.user_id).all()
     anime_ids = [e.anime_id for e in entries]
     anime_list = Anime.query.filter(Anime.id.in_(anime_ids)).all() if anime_ids else []
-    return render_template('watched.html', anime_list=anime_list)
+    watched_count = len(anime_list)
+    return render_template('watched.html',
+                           anime_list=anime_list,
+                           watched_count=watched_count
+                           )
+
 
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
+
+
+@app.route('/anime/<int:id>/rate', methods=['POST'])
+@login_required
+def rate_anime(id):
+    Anime.query.get_or_404(id)
+
+    in_watched = Watched.query.filter_by(user_id=current_user.user_id, anime_id=id).first() is not None
+    if not in_watched:
+        return redirect(url_for('anime_detail', id=id))
+
+    score = request.form.get('score', type=int)
+    if score is None or score < 1 or score > 5:
+        return redirect(url_for('anime_detail', id=id))
+
+    existing = Rating.query.filter_by(user_id=current_user.user_id, anime_id=id).first()
+    if existing:
+        existing.score = score
+    else:
+        db.session.add(Rating(user_id=current_user.user_id, anime_id=id, score=score))
+
+    db.session.commit()
+    return redirect(url_for('anime_detail', id=id) + '#community-rating')
 
 
 if __name__ == "__main__":

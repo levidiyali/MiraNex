@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: row;
     background-color: #1a293a;
-    gap: 330px;
+    gap: 280px;
     justify-content: center;
     align-items: center;
     padding: 11px;
@@ -12,7 +12,6 @@
 
 .logo {
     font-weight: bold;
-    margin-left: 55px;
     font-size: 37px;
 }
 

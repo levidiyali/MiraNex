@@ -103,6 +103,16 @@ body {
     margin-top: 30px;
 }
 
+.watchlist-container .anime-list .label {
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.watchlist-container .anime-list .label label{
+    font-weight: normal;
+    font-size: 15px;
+}
+
 .empty {
     grid-column: 1 / -1;
     display: flex;

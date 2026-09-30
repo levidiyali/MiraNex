@@ -1,27 +1,113 @@
 :root {
-    --background:  #101822;
+    --background: #101822;
     --button-color: rgb(26, 106, 255);
 }
 
-*{
+* {
     padding: 0;
     margin: 0;
     color: rgb(180, 180, 180);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
 }
 
-body{
+body {
     background-color: var(--background);
 }
 
-.first-part img{
-    width: 180px;
+.detail-banner {
+    width: 100%;
+    height: 310px;
+    background-image: var(--banner-img);
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
-.second-part h1{
-    margin-top: 10px;
-    font-size: 20px;
-    max-width: 150px;
+.detail-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.animee {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding-left: 120px;
+    padding-bottom: 40px;
+    background: linear-gradient(to top, #162333 77%, transparent 23%);
+}
+
+.first-part {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.first-part img {
+    width: 200px;
+}
+
+.second-part {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 70px;
+}
+
+.second-part h1 {
+    font-size: 30px;
+}
+
+.second-part .item-head {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.second-part .item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.second-part .item label {
+    font-weight: bold;
+}
+
+.trailer-link a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: whitesmoke;
+    font-weight: bold;
+    background-color: rgb(26, 106, 255);
+    border-radius: 8px;
+    padding: 10px 20px;
+    width: 160px;
+    height: 24px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.trailer-link a:hover {
+    background-color: rgb(8, 87, 235);
+}
+
+.trailer-link img {
+    width: 20px;
 }
 
 .list-actions {
@@ -69,58 +155,62 @@ body{
     margin-left: 5px;
 }
 
-.container{
+.container {
     display: flex;
+    flex-direction: column;
     gap: 60px;
-    margin-left: 110px;
-    margin-top: 70px;
+    position: relative;
+    z-index: 1;
+    margin-top: -100px;
 }
 
-.right-side .desc{
-    margin-top: 25px;
+.second-container {
+    display: flex;
+    flex-direction: row;
+    gap: 80px;
+    padding-left: 120px;
 }
 
-.right-side .desc h2{
+.right-side .desc h2 {
     font-size: 20px;
 }
 
-.right-side .desc p{
+.right-side .desc p {
     max-width: 860px;
     margin-top: 10px;
     text-align: justify;
 }
 
-.top-bg-img img{
+.top-bg-img img {
     width: 830px;
     margin-top: 65px;
 }
 
-.side-details{
+.side-details {
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 167px;
-    background-color:  #19283a;
+    background-color: #19283a;
     padding: 20px;
     font-size: 13px;
-    margin-top: 50px;
 }
 
-.side-details .item label{
+.side-details .item label {
     color: whitesmoke;
     font-weight: bold;
 }
 
-.side-details .item p{
+.side-details .item p {
     margin-top: 4px;
 }
 
-.recommended{
+.recommended {
     margin-top: 60px;
     margin-bottom: 75px;
 }
 
-.recommended h2{
+.recommended h2 {
     margin-bottom: 25px;
     font-size: 20px;
 }
@@ -203,7 +293,8 @@ body{
     margin-left: 5px;
 }
 
-.comment-top label, h2 {
+.comment-top label,
+h2 {
     color: whitesmoke;
 }
 
@@ -255,7 +346,7 @@ body{
 #comment-cancel-btn {
     background: none;
     border: 1px solid rgb(100, 100, 100);
-    color: white;
+    color: whitesmoke;
     padding: 8px 20px;
     border-radius: 6px;
     cursor: pointer;
@@ -280,11 +371,13 @@ body{
     background-color: rgb(23, 94, 228);
 }
 
+/* User comments */
+
 .comment {
     background-color: var(--nav-color);
     border-radius: 8px;
     padding: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .comment-header {
@@ -329,6 +422,7 @@ body{
     margin-left: 50px;
     font-size: 15px;
     line-height: 1.5;
+    margin-top: -4px;
 }
 
 .delete-comment-form button {
@@ -338,7 +432,6 @@ body{
     font-size: 12px;
     cursor: pointer;
     padding: 0;
-
 }
 
 .delete-comment-form button:hover {
@@ -393,27 +486,27 @@ body{
     margin-top: 2px;
 }
 
-.edit-comment-btn:hover{
+.edit-comment-btn:hover {
     text-decoration: underline;
 }
 
-.edit-comment-actions button[type=submit] {
+.edit-comment-actions button[type="submit"] {
     background-color: var(--button-color);
     color: whitesmoke;
     font-weight: bold;
 }
 
-.edit-comment-actions button[type=submit]:hover {
+.edit-comment-actions button[type="submit"]:hover {
     background-color: rgb(23, 94, 228);
 }
 
-.edit-comment-actions button[type=button] {
+.edit-comment-actions button[type="button"] {
     background: none;
     border: 1px solid rgb(100, 100, 100);
     color: whitesmoke;
 }
 
-.edit-comment-actions button[type=button]:hover {
+.edit-comment-actions button[type="button"]:hover {
     background-color: gray;
 }
 
@@ -438,7 +531,7 @@ body{
     text-decoration: none;
 }
 
-#comment-delete-overlay .confirm-box h3{
+#comment-delete-overlay .confirm-box h3 {
     letter-spacing: 0;
     color: whitesmoke;
 }
@@ -461,19 +554,143 @@ body{
     background-color: #c21818;
 }
 
+/* For rating */
+
+.community-rating-section {
+    margin-top: 40px;
+    background-color: #19283a;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.community-rating-section h2 {
+    font-size: 20px;
+    color: whitesmoke;
+    margin-bottom: 12px;
+}
+
+.community-rating-average {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.avg-score {
+    font-size: 22px;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.rating-count,
+.no-ratings {
+    font-size: 13px;
+    color: rgb(150, 150, 150);
+}
+
+.rate-locked {
+    font-size: 14px;
+    color: rgb(150, 150, 150);
+}
+
+.rate-form {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.star-picker {
+    display: flex;
+    gap: 4px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.star-picker .star {
+    color: rgb(80, 90, 105);
+    transition: color 0.1s ease;
+}
+
+.star-picker .star.filled {
+    color: #ffcc33;
+}
+
+#rate-submit-btn {
+    background-color: var(--button-color);
+    color: whitesmoke;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#rate-submit-btn:hover {
+    background-color: rgb(23, 94, 228);
+}
+
+/* Stats side rating */
+
+.rating-count-small {
+    font-size: 11px;
+    color: rgb(140, 140, 140);
+}
+
+/* For the trailer embed */
+
+.trailer-section {
+    margin-top: 45px;
+}
+
+.trailer-section h2 {
+    font-size: 20px;
+    margin-bottom: 13px;
+}
+
+.trailer-wrapper {
+    position: relative;
+    width: 95%;
+    max-width: 860px;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.trailer-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 @media (max-width: 1024px) {
-    .container {
-        margin-left: 0;
-        margin-top: 40px;
-        padding: 0 20px;
+    .animee {
+        padding-left: 40px;
+        padding-bottom: 25px;
+        gap: 25px;
+    }
+
+    .first-part img {
+        width: 160px;
+    }
+
+    .second-part h1 {
+        font-size: 19px;
+    }
+
+    .second-container {
+        padding-left: 40px;
+        padding-right: 40px;
         gap: 30px;
     }
 
     .left-side {
-        width: 100%;
+        width: auto;
     }
 
-    .first-part img {
+    .side-details {
         width: 150px;
     }
 
@@ -498,31 +715,91 @@ body{
         aspect-ratio: 155 / 230;
         object-fit: cover;
     }
+
+    .detail-banner {
+        height: 240px;
+    }
+
+    .container {
+        margin-top: -90px;
+        gap: 30px;
+    }
+
+    .trailer-link a {
+        width: 120px;
+        height: 24px;
+    }
+
+    .trailer-link img {
+        width: 20px;
+    }
 }
 
 @media (max-width: 768px) {
-    .container {
+    .detail-banner {
+        height: 220px;
+    }
+
+    .trailer-link a img {
+        width: 20px;
+    }
+
+    .trailer-link a {
+        padding: 10px 15px;
+    }
+
+    .animee {
         flex-direction: column;
-        margin-top: 20px;
-        padding: 0 15px;
-        gap: 20px;
+        align-items: center;
+        text-align: center;
+        padding: 0 15px 30px;
+        gap: 15px;
+        background: linear-gradient(to top, #162333 85%, transparent 15%);
     }
 
     .first-part {
         display: flex;
-        justify-content: center;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 15px;
+        margin-top: -55px;
+        margin-left: -45px;
+    }
+
+    .first-part .list-actions {
+        margin-top: 120px;
+    }
+
+    .first-part img {
+        width: 115px;
     }
 
     .second-part {
-        text-align: center;
+        margin-top: 0;
     }
 
     .second-part h1 {
         max-width: 100%;
+        font-size: 20px;
+    }
+
+    .second-part .item {
+        align-items: center;
     }
 
     .list-actions {
         align-items: center;
+    }
+
+    .second-container {
+        flex-direction: column;
+        padding-left: 15px;
+        padding-right: 15px;
+        gap: 20px;
+    }
+
+    .left-side {
+        width: 100%;
     }
 
     .side-details {
@@ -543,7 +820,8 @@ body{
         margin-bottom: 40px;
     }
 
-    .desc{
+    .desc {
+        margin-top: 10px;
         margin-bottom: 14px;
     }
 
@@ -553,9 +831,23 @@ body{
         padding: 20px;
         text-align: left;
     }
-    
+
+    .rate-form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .star-picker {
+        font-size: 32px;
+    }
+
+    .trailer-wrapper {
+        width: 100%;
+    }
+
+    .container {
+        margin-top: -60px;
+        gap: 20px;
+    }
 }
-
-
-
-

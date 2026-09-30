@@ -11,18 +11,33 @@
     <body>
         {% include 'nav.html' %}
 
+        <div class="detail-banner" style="--banner-img: url({{ url_for('static', filename = 'images/' + anime.detail_image) }})"></div>
+
         <div class="container">
 
-            <div class="left-side">
-
+            <div class="animee">
                 <div class="first-part">
                     <img src="{{ url_for('static', filename = 'images/' + anime.image) }}">
+
+                    <div class="trailer-link">
+                            <a href="#trailer-nav"><img src="{{ url_for('static', filename = 'images/play.png') }}" alt="play"> Watch Trailer</a>
+                        </div>
                 </div>
 
                 <div class="second-part">
                     <h1>{{ anime.name }}</h1>
 
-                    <div class="list-actions">
+                    <div class="item-head">
+                        <div class="item">
+                            <label>Community Rating</label>
+                            {% if rating_count > 0 %}
+                                <p>{{ community_rating_avg }} ⭐ <span class="rating-count-small">({{ rating_count }})</span></p>
+                            {% else %}
+                                <p class="rating-count-small">No ratings yet</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="list-actions">
                         {% if current_user.is_authenticated %}
 
                             <form
@@ -48,170 +63,228 @@
                             </div>
                         {% endif %}
                     </div>
-                </div>
-
-
-                <div class="side-details">
-                    <div class="item">
-                        <label>Rating</label>
-                        <p>{{ anime.rating }} ⭐</p>
-                    </div>
-
-                    <div class="item">
-                        <label>Genres</label>
-                        <div class="genre-list">
-                            {% for g in anime.genres.split(',') %}
-                                <p>{{ g.strip() }}</p>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <label>Format</label>
-                        <p>{{ anime.format }}</p>
-                    </div>
-
-                    <div class="item">
-                        <label>Seasons</label>
-                        <p>{{ anime.seasons }}</p>
-                    </div>
-
-                    <div class="item">
-                        <label>Episodes</label>
-                        <p>{{ anime.episodes }}</p>
-                    </div>
-
-                    <div class="item">
-                        <label>Episode Length</label>
-                        <p>{{ anime.episode_length }}</p>
-                    </div>
-
-                    <div class="item">
-                        <label>Release Year</label>
-                        <p>{{ anime.release_year }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="right-side">
-                <div class="desc">
-                    <h2>Description</h2>
-                    <p>{{ anime.description }}</p>
-                </div>
+            <div class="second-container">
+                <div class="left-side">
 
-                <div class="top-bg-img">
-                    <img src="{{ url_for('static', filename = 'images/' + anime.detail_image) }}">
-                </div>
+                    <div class="side-details">
+                        <div class="item">
+                            <label>Rating</label>
+                            <p>{{ anime.rating }} ⭐</p>
+                        </div>
 
-                <div class="recommended">
-                    <h2>You Might Also Like</h2>
-                    <div class="anime-grid">
-                        {% for rec in recommended %}
-                            <div class="list">
-                                <a href="/anime/{{ rec.id }}" class="anime-card">
-                                    <img src="{{ url_for('static', filename = 'images/' + rec.image) }}">
-                                    <h2>{{ rec.name }}</h2>
-                                </a>
+                        <div class="item">
+                            <label>Genres</label>
+                            <div class="genre-list">
+                                {% for g in anime.genres.split(',') %}
+                                    <p>{{ g.strip() }}</p>
+                                {% endfor %}
                             </div>
-                        {% else %}
-                            <p>No similar anime found.</p>
-                        {% endfor %}
+                        </div>
+
+                        <div class="item">
+                            <label>Format</label>
+                            <p>{{ anime.format }}</p>
+                        </div>
+
+                        <div class="item">
+                            <label>Seasons</label>
+                            <p>{{ anime.seasons }}</p>
+                        </div>
+
+                        <div class="item">
+                            <label>Episodes</label>
+                            <p>{{ anime.episodes }}</p>
+                        </div>
+
+                        <div class="item">
+                            <label>Episode Length</label>
+                            <p>{{ anime.episode_length }}</p>
+                        </div>
+
+                        <div class="item">
+                            <label>Release Year</label>
+                            <p>{{ anime.release_year }}</p>
+                        </div>
+
+                        <div class="item">
+                            <label>Community Rating</label>
+                            {% if rating_count > 0 %}
+                                <p>{{ community_rating_avg }} ⭐ <span class="rating-count-small">({{ rating_count }})</span></p>
+                            {% else %}
+                                <p class="rating-count-small">No ratings yet</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
 
-                <div class="comments-section">
-                    
-                    <div class="comment-top">
-                        <label for="commenttt">{{ total_comments }}</label>
-                        <h2>Comments</h2>
+                <div class="right-side">
+                    <div class="desc">
+                        <h2>Description</h2>
+                        <p>{{ anime.description }}</p>
                     </div>
 
-                    {% if current_user.is_authenticated %}
-                        <form method="POST" action="{{ url_for('anime_detail', id = anime.id) }}" class="comment-form">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                            <textarea name="content" id="comment-textarea" placeholder="Share your thoughts..." required maxlength="1000"></textarea>
-                            <span class="char-counter" id="comment-char-counter">0/1000</span>
-
-                            <div class="post-cancel-btn">
-                                <button type="button" id="comment-cancel-btn">Cancel</button>
-                                <button type="submit" id="post-comment-btn">Post Comment</button>
+                    {% if trailer_embed_url %}
+                        <div class="trailer-section" id="trailer-nav">
+                            <h2>Trailer</h2>
+                            <div class="trailer-wrapper">
+                                <iframe
+                                    src="{{ trailer_embed_url }}"
+                                    title="{{ anime.name }} trailer"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen
+                                >
+                                </iframe>
                             </div>
-                        </form>
-
-                    {% else %}
-                        <p class="login-to-comment"><a href="{{ url_for('login') }}">Log in</a> to leave a comment.</p>
-                    {% endif %}
-
-                    <div class="comment-list">
-
-                        {% for comment in comments %}
-
-                            <div class="comment {% if current_user.is_authenticated and comment.user_id == current_user.user_id %}pinned-comment{% endif %}">
-
-                                <div class="comment-header">
-
-                                    <div class="profilee">
-                                        <label class="profile-icon">👤</label>
-                                        <span class="comment-user">{{ comment.user.username }}</span>
-                                    </div>
-
-                                    <span class="comment-date">
-                                        {{ comment.created_at.strftime('%b %d, %Y') }}
-                                        {% if comment.updated_at %}<span class="edited-tag">(edited)</span>{% endif %}
-                                    </span>
-                                </div>
-
-                                <p class="comment-content" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
-
-                                {% if current_user.is_authenticated and current_user.user_id == comment.user_id %}
-
-                                    <form method="POST" action="{{ url_for('edit_comment', comment_id = comment.id) }}" class="edit-comment-form" id="edit-form-{{ comment.id }}" style="display: none;">
-                                        
-                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                                        <textarea name="content" maxlength="1000">{{ comment.content }}</textarea>
-
-                                        <div class="edit-comment-actions">
-                                            <button type="button" class="edit-cancel-btn" data-comment-id="{{ comment.id }}">Cancel</button>
-                                            <button type="submit" id="#save-btn">Save</button>
-                                        </div>
-                                        
-                                    </form>
-
-                                    <div class="comment-owner-actions" id="comment-actions-{{ comment.id }}">
-
-                                        <button type="button" class="edit-comment-btn" data-comment-id="{{ comment.id }}">Edit</button>
-
-                                        <form method="POST" action="{{ url_for('delete_comment', comment_id = comment.id) }}" class="delete-comment-form">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </div>
-
-                                {% endif %}
-                            </div>
-
-                        {% else %}
-                            <p class="no-comments">No comments yet. Be the first to share your thoughts.</p>
-                        {% endfor %}
-                    </div>
-
-                    {% if total_comments > shown_count %}
-                        <div class="load-more-comments-container">
-                            <a href="{{ url_for('anime_detail', id = anime.id) }}?comments={{ comment_limit + 9 }}#comments">Load More Comments</a>
                         </div>
                     {% endif %}
 
-                </div>
+                    <div class="recommended">
+                        <h2>You Might Also Like</h2>
+                        <div class="anime-grid">
+                            {% for rec in recommended %}
+                                <div class="list">
+                                    <a href="/anime/{{ rec.id }}" class="anime-card">
+                                        <img src="{{ url_for('static', filename = 'images/' + rec.image) }}">
+                                        <h2>{{ rec.name }}</h2>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <p>No similar anime found.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-                <div class="confirm-overlay" id="comment-delete-overlay">
-                    <div class="confirm-box">
-                        <h3>Delete Comment</h3>
-                        <p>Delete this comment permanently?</p>
-                        <div class="confirm-actions">
-                            <button type="button" id="comment-delete-cancel">Cancel</button>
-                            <button type="button" id="comment-delete-confirm">Yes, Delete</button>
+                    <div class="community-rating-section" id="community-rating">
+                        <h2>MiraNex Community Rating</h2>
+
+                        <div class="community-rating-average">
+                            {% if rating_count > 0 %}
+                                <span class="avg-score">{{ community_rating_avg }} ⭐</span>
+                                <span class="rating-count">({{ rating_count }} rating{{ 's' if rating_count != 1 else '' }})</span>
+                            {% else %}
+                                <span class="no-ratings">No ratings yet</span>
+                            {% endif %}
+                        </div>
+
+                        {% if current_user.is_authenticated %}
+                            {% if in_watched %}
+                                <form method="POST" action="{{ url_for('rate_anime', id = anime.id) }}" class="rate-form" id="rate-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="score" id="rate-score-input" value="{{ user_rating or 0 }}">
+
+                                    <div class="star-picker" id="star-picker" data-current-rating="{{ user_rating or 0 }}">
+                                        {% for i in range(1, 6) %}
+                                            <span class="star" data-value="{{ i }}">★</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <button type="submit" id="rate-submit-btn">{{ 'Update Rating' if user_rating else 'Submit Rating' }}</button>
+                                </form>
+                            {% else %}
+                                <p class="rate-locked">Mark this anime as <strong>Watched</strong> to leave your rating.</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="rate-locked"><a href="{{ url_for('login') }}">Log in</a> and mark this anime as watched to rate it.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="comments-section">
+                    
+                        <div class="comment-top">
+                            <label for="commenttt">{{ total_comments }}</label>
+                            <h2>Comments</h2>
+                        </div>
+
+                        {% if current_user.is_authenticated %}
+                            <form method="POST" action="{{ url_for('anime_detail', id = anime.id) }}" class="comment-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <textarea name="content" id="comment-textarea" placeholder="Share your thoughts..." required maxlength="1000"></textarea>
+                                <span class="char-counter" id="comment-char-counter">0/1000</span>
+
+                                <div class="post-cancel-btn">
+                                    <button type="button" id="comment-cancel-btn">Cancel</button>
+                                    <button type="submit" id="post-comment-btn">Post Comment</button>
+                                </div>
+                            </form>
+
+                        {% else %}
+                            <p class="login-to-comment"><a href="{{ url_for('login') }}">Log in</a> to leave a comment.</p>
+                        {% endif %}
+
+                        <div class="comment-list">
+
+                            {% for comment in comments %}
+
+                                <div class="comment {% if current_user.is_authenticated and comment.user_id == current_user.user_id %}pinned-comment{% endif %}">
+
+                                    <div class="comment-header">
+                                        <div class="profilee">
+                                            <label class="profile-icon">👤</label>
+                                            <span class="comment-user">{{ comment.user.username }}</span>
+                                        </div>
+
+                                        <span class="comment-date">
+                                            {{ comment.created_at.strftime('%b %d, %Y') }}
+                                            {% if comment.updated_at %}<span class="edited-tag">(edited)</span>{% endif %}
+                                        </span>
+                                    </div>
+
+                                    <p class="comment-content" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+                                    {% if current_user.is_authenticated and current_user.user_id == comment.user_id %}
+
+                                        <form method="POST" action="{{ url_for('edit_comment', comment_id = comment.id) }}" class="edit-comment-form" id="edit-form-{{ comment.id }}" style="display: none;">
+                                        
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                            <textarea name="content" maxlength="1000">{{ comment.content }}</textarea>
+
+                                            <div class="edit-comment-actions">
+                                                <button type="button" class="edit-cancel-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+                                                <button type="submit" id="#save-btn">Save</button>
+                                            </div>
+                                        
+                                        </form>
+
+                                        <div class="comment-owner-actions" id="comment-actions-{{ comment.id }}">
+
+                                            <button type="button" class="edit-comment-btn" data-comment-id="{{ comment.id }}">Edit</button>
+
+                                            <form method="POST" action="{{ url_for('delete_comment', comment_id = comment.id) }}" class="delete-comment-form">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit">Delete</button>
+                                            </form>
+                                        </div>
+
+                                    {% endif %}
+                                </div>
+
+                            {% else %}
+                                <p class="no-comments">No comments yet. Be the first to share your thoughts.</p>
+                            {% endfor %}
+                        </div>
+
+                        {% if total_comments > shown_count %}
+                            <div class="load-more-comments-container">
+                                <a href="{{ url_for('anime_detail', id = anime.id) }}?comments={{ comment_limit + 9 }}#comments">Load More Comments</a>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="confirm-overlay" id="comment-delete-overlay">
+                        <div class="confirm-box">
+                            <h3>Delete Comment</h3>
+                            <p>Delete this comment permanently?</p>
+                            <div class="confirm-actions">
+                                <button type="button" id="comment-delete-cancel">Cancel</button>
+                                <button type="button" id="comment-delete-confirm">Yes, Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,6 +392,59 @@
                         commentTextarea.value = "";
                         updateCharCounter();
                     });
+                }
+
+                const starPicker = document.getElementById("star-picker");
+                if (starPicker) {
+                    const stars = starPicker.querySelectorAll(".star");
+                    const scoreInput = document.getElementById("rate-score-input");
+                    let currentRating = parseInt(starPicker.dataset.currentRating, 10) || 0;
+
+                    function paintStars(value) {
+                        stars.forEach(function (star) {
+                            const starValue = parseInt(star.dataset.value, 10);
+                            star.classList.toggle("filled", starValue <= value);
+                        });
+                    }
+
+                    paintStars(currentRating);
+
+                    stars.forEach(function (star) {
+                        star.addEventListener("mouseenter", function () {
+                            paintStars(parseInt(star.dataset.value, 10));
+                        });
+
+                        star.addEventListener("click", function () {
+                            currentRating = parseInt(star.dataset.value, 10);
+                            scoreInput.value = currentRating;
+                            paintStars(currentRating);
+                        });
+                    });
+
+                    starPicker.addEventListener("mouseleave", function () {
+                        paintStars(currentRating);
+                    });
+                }
+
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get("just_watched") === "1") {
+                    const ratingSection = document.getElementById("community-rating");
+                    if (ratingSection) {
+                        setTimeout(function () {
+                            ratingSection.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
+                        }, 150);
+                    }
+
+                    urlParams.delete("just_watched");
+                    const cleanQuery = urlParams.toString();
+                    const cleanUrl =
+                        window.location.pathname +
+                        (cleanQuery ? "?" + cleanQuery : "") +
+                        window.location.hash;
+                    history.replaceState(null, "", cleanUrl);
                 }
             })();
         </script>

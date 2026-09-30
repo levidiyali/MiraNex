@@ -51,8 +51,6 @@
             .info-item {
                 display: flex;
                 flex-direction: column;
-                border-bottom: 1px solid gray;
-                padding-bottom: 46px;
             }
 
             .info-body {
@@ -61,10 +59,15 @@
                 gap: 20px;
             }
 
+            .copyright {
+                border-bottom: 1px solid gray;
+                padding-bottom: 46px;
+            }
+
             .info-item h2,
             .p-item h2,
             .contactt h2,
-            .note h2 {
+            .copyright h2 {
                 color: whitesmoke;
                 font-size: 22px;
                 margin-bottom: 10px;
@@ -73,7 +76,7 @@
             .info-item p,
             .p-item p,
             .contactt p,
-            .note p {
+            .copyright p {
                 max-width: 900px;
                 color: rgb(180, 180, 180);
                 font-size: 16px;
@@ -97,6 +100,8 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 20px;
                 margin-top: 20px;
+                border-bottom: 1px solid gray;
+                padding-bottom: 46px;
             }
 
             .p-item {
@@ -113,10 +118,6 @@
                 color: whitesmoke;
                 font-size: 19px;
                 font-weight: bold;
-            }
-
-            .contactt {
-                margin-top: 15px;
             }
 
             .contactt span {
@@ -148,14 +149,14 @@
                 .info-item h2,
                 .p-item h2,
                 .contactt h2,
-                .note h2 {
+                .copyright h2 {
                     font-size: 19px;
                 }
 
                 .info-item p,
                 .p-item p,
                 .contactt p,
-                .note p {
+                .copyright {
                     font-size: 15px;
                 }
             }
@@ -227,15 +228,17 @@
                 </div>
             </div>
 
+            <div class="copyright">
+                <h2>Copyright and Intellectual Property</h2>
+                <p>MiraNex does not claim ownership of the anime titles, characters, artwork, images, or other copyrighted materials displayed on the website. All rights remain with their respective creators, studios, publishers, and copyright holders.</p> <br>
+                <p>MiraNex is an independent project for informational and anime discovery purposes and is not affiliated with or endorsed by the respective rights holders. If you are a copyright holder and have concerns about any content displayed on MiraNex, please contact us for review.</p>
+            </div>
+
             <div class="contactt">
                 <h2>Contact</h2>
                 <p>If you have questions about this Privacy Policy, you can reach out at <span>miranex15@gmail.com</span></p>
             </div>
 
-            <div class="note">
-                <h2>A Note on This Project</h2>
-                <p>MiraNex is an academic project developed as part of a college assignment. This Privacy Policy describes how the application actually handles data, but it is not a formal legal document.</p>
-            </div>
         </div>
 
         {% include 'footer.html' %}
